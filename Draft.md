@@ -20,8 +20,8 @@ The target audience is parents who want to give their child a unique, meaningful
 
 ## Tech Stack
 
-### Backend — Symfony 7 (PHP 8.3)
-- **Symfony 7** — REST API, business logic, authentication flow
+### Backend — Symfony 8 (PHP 8.4)
+- **Symfony 8** — REST API, business logic, authentication flow
 - **Doctrine ORM** — database entities, migrations, repositories
 - **Symfony Messenger** — async message bus for story and illustration generation jobs
 - **LexikJWTAuthenticationBundle** — JWT token issuance and validation
@@ -202,8 +202,8 @@ Book ──< Rating
 | Service | Image | Port | Purpose |
 |---|---|---|---|
 | nginx | nginx:alpine | 80 | Reverse proxy |
-| php-fpm | php:8.3-fpm (custom) | 9000 | Symfony web process |
-| worker | php:8.3-fpm (custom) | — | Messenger consumer |
+| php-fpm | php:8.4-fpm (custom) | 9000 | Symfony web process |
+| worker | php:8.4-fpm (custom) | — | Messenger consumer |
 | postgres | postgres:16 | 5432 | Primary database |
 | redis | redis:7-alpine | 6379 | Queue + cache |
 | minio | minio/minio | 9000/9001 | S3-compatible storage (dev) |
@@ -222,7 +222,7 @@ storycraft/
 ├── Makefile
 ├── nginx/
 │   └── default.conf
-├── backend/                   # Symfony 7
+├── backend/                   # Symfony 8
 │   ├── Dockerfile
 │   ├── src/
 │   │   ├── Controller/
