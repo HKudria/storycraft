@@ -24,3 +24,17 @@ services:
             $baseUrl: '%env(ANTHROPIC_BASE_URL)%'
             $apiKey: '%env(ANTHROPIC_API_KEY)%'
             $model: '%env(ANTHROPIC_MODEL)%'
+
+    App\Service\ImageService:
+        arguments:
+            $accountId: '%env(CF_ACCOUNT_ID)%'
+            $apiToken: '%env(CF_API_TOKEN)%'
+
+    App\Service\StorageService:
+        arguments:
+            $endpoint: '%env(S3_ENDPOINT)%'
+            $key: '%env(S3_KEY)%'
+            $secret: '%env(S3_SECRET)%'
+            $bucket: '%env(S3_BUCKET)%'
+            $region: '%env(S3_REGION)%'
+            $publicUrl: '%env(S3_PUBLIC_URL)%'

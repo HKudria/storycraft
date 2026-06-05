@@ -5,11 +5,13 @@ namespace App\MessageHandler;
 use App\Entity\Book;
 use App\Entity\Job;
 use App\Entity\Page;
+use App\Message\GenerateIllustrationMessage;
 use App\Message\GenerateStoryMessage;
 use App\Service\AnthropicService;
 use App\Service\SubscriptionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class GenerateStoryHandler
@@ -18,6 +20,7 @@ class GenerateStoryHandler
         private readonly EntityManagerInterface $em,
         private readonly AnthropicService $anthropicService,
         private readonly SubscriptionService $subscriptionService,
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
@@ -83,6 +86,11 @@ class GenerateStoryHandler
 
             $this->subscriptionService->incrementUsage($book->getUser());
             $this->em->flush();
+
+            $firstPage = $book->getPages()->first();
+            if ($firstPage) {
+                $this->bus->dispatch(new GenerateIllustrationMessage($book->getId(), $firstPage->getId()));
+            }
         } catch (\Throwable $e) {
             $book->setStatus(Book::STATUS_FAILED);
             if ($job) {

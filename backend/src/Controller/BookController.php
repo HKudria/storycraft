@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\BookRequest;
 use App\Entity\Book;
 use App\Service\BookService;
+use App\Service\StorageService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,7 @@ class BookController extends AbstractController
 {
     public function __construct(
         private readonly BookService $bookService,
+        private readonly StorageService $storageService,
     ) {
     }
 
@@ -56,6 +58,24 @@ class BookController extends AbstractController
         return new JsonResponse($this->serializeBookDetail($book));
     }
 
+    #[Route('/api/books/{id}/download', name: 'books_download', methods: ['GET'])]
+    public function download(int $id): JsonResponse
+    {
+        try {
+            $book = $this->bookService->findForUser($this->getUser(), $id);
+        } catch (\RuntimeException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
+
+        if ($book->getPdfS3Key() === null) {
+            return new JsonResponse(['error' => 'PDF not ready yet.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $url = $this->storageService->getPresignedUrl($book->getPdfS3Key(), 3600);
+
+        return new JsonResponse(['url' => $url]);
+    }
+
     #[Route('/api/books/{id}', name: 'books_delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
@@ -94,6 +114,9 @@ class BookController extends AbstractController
                 'pageNumber' => $p->getPageNumber(),
                 'text' => $p->getText(),
                 'imagePrompt' => $p->getImagePrompt(),
+                'imageUrl' => $p->getImageS3Key()
+                    ? $this->storageService->getPresignedUrl($p->getImageS3Key(), 3600)
+                    : null,
             ],
             $book->getPages()->toArray(),
         );

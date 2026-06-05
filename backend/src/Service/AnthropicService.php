@@ -25,6 +25,7 @@ class AnthropicService
             'json' => [
                 'model' => $this->model,
                 'max_tokens' => 8192,
+                'system' => 'You are a creative children\'s story writer. Every story must be completely original. Never reuse character names, plot points, or specific scenes from previous stories. Session ID: ' . bin2hex(random_bytes(8)),
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt],
                 ],

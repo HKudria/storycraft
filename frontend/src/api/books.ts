@@ -6,6 +6,7 @@ export interface PageData {
   pageNumber: number
   text: string | null
   imagePrompt: string | null
+  imageUrl: string | null
 }
 
 export interface BookData {
@@ -47,8 +48,11 @@ export function useBook(id: number | null) {
     },
     enabled: id !== null,
     refetchInterval: (query) => {
-      const status = query.state.data?.status
-      return status === 'pending' || status === 'processing' ? 3000 : false
+      const data = query.state.data
+      if (!data) return false
+      if (data.status === 'pending' || data.status === 'processing') return 3000
+      const allImagesReady = data.pages?.every((p) => p.imageUrl) ?? false
+      return data.status === 'done' && !allImagesReady ? 5000 : false
     },
   })
 }

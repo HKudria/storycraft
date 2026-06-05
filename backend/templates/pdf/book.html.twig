@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; padding: 0; font-family: sans-serif; }
+    .cover { text-align: center; padding-top: 200px; }
+    .cover h1 { font-size: 36px; color: #4338ca; margin-bottom: 20px; }
+    .cover p { font-size: 18px; color: #666; margin: 8px 0; }
+    .page { page-break-before: always; padding: 20px; }
+    .page img { width: 100%; max-height: 500px; object-fit: contain; margin-bottom: 20px; }
+    .page .text { font-size: 18px; line-height: 1.8; color: #333; text-align: justify; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+    <h1>{{ title }}</h1>
+    <p>A story for {{ childName }}</p>
+    <p>{{ templateTitle }}</p>
+    <p>{{ createdAt }}</p>
+</div>
+
+{% for page in pages %}
+<div class="page">
+    {% if page.imageUrl %}
+    <img src="{{ page.imageUrl }}" alt="Page {{ page.pageNumber }}">
+    {% endif %}
+    <div class="text">{{ page.text|nl2br }}</div>
+</div>
+{% endfor %}
+
+</body>
+</html>
