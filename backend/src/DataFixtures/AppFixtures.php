@@ -17,7 +17,7 @@ class AppFixtures extends Fixture
                 'category' => 'adventure',
                 'ageMin' => 3,
                 'ageMax' => 10,
-                'promptBlueprint' => "Write a children's adventure story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nEach page text should be 2-3 sentences, age-appropriate. Each imagePrompt should describe a vivid scene for illustration.",
+                'promptBlueprint' => "Write a children's adventure story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nEach page text should be 4-6 sentences, descriptive and immersive, age-appropriate. Each imagePrompt should describe a vivid scene for illustration.",
             ],
             [
                 'title' => 'Bedtime',
@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
                 'category' => 'bedtime',
                 'ageMin' => 1,
                 'ageMax' => 7,
-                'promptBlueprint' => "Write a gentle bedtime story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a calming bedtime story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nThe story should be soothing, with soft imagery and a sleepy tone. Each page text should be 2-3 short sentences.",
+                'promptBlueprint' => "Write a gentle bedtime story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a calming bedtime story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nThe story should be soothing, with soft imagery and a sleepy tone. Each page text should be 4-6 sentences, rich in calming description.",
             ],
             [
                 'title' => 'Educational',
@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
                 'category' => 'educational',
                 'ageMin' => 4,
                 'ageMax' => 12,
-                'promptBlueprint' => "Write an educational story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate an educational story with exactly 8 pages that teaches something about the topic. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nWeave facts naturally into the narrative. Each page text should be 2-3 sentences.",
+                'promptBlueprint' => "Write an educational story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate an educational story with exactly 8 pages that teaches something about the topic. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nWeave facts naturally into the narrative. Each page text should be 4-6 sentences with rich detail.",
             ],
             [
                 'title' => 'Fairy Tale',
@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
                 'category' => 'fantasy',
                 'ageMin' => 3,
                 'ageMax' => 9,
-                'promptBlueprint' => "Write a fairy tale story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a magical fairy tale with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nInclude magical elements, a gentle conflict, and a happy ending. Each page text should be 2-3 sentences.",
+                'promptBlueprint' => "Write a fairy tale story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a magical fairy tale with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nInclude magical elements, a gentle conflict, and a happy ending. Each page text should be 4-6 sentences, enchanting and descriptive.",
             ],
             [
                 'title' => 'Space',
@@ -49,7 +49,7 @@ class AppFixtures extends Fixture
                 'category' => 'sci-fi',
                 'ageMin' => 5,
                 'ageMax' => 12,
-                'promptBlueprint' => "Write a space adventure story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a space-themed story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nInclude planets, stars, and cosmic wonder. Each page text should be 2-3 sentences.",
+                'promptBlueprint' => "Write a space adventure story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate a space-themed story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nInclude planets, stars, and cosmic wonder. Each page text should be 4-6 sentences, vivid and immersive.",
             ],
             [
                 'title' => 'Ocean',
@@ -57,7 +57,7 @@ class AppFixtures extends Fixture
                 'category' => 'nature',
                 'ageMin' => 3,
                 'ageMax' => 10,
-                'promptBlueprint' => "Write an ocean adventure story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate an underwater story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nInclude sea creatures, coral reefs, and ocean wonders. Each page text should be 2-3 sentences.",
+                'promptBlueprint' => "Write an ocean adventure story for {childName}, age {age}. The child {appearance} with interests in {interests}. {petLine}\n\nTopic: {topic}\n\nLanguage: {language}\n\nCreate an underwater story with exactly 8 pages. For each page, provide JSON:\n{\"pages\": [{\"text\": \"...\", \"imagePrompt\": \"...\"}]}\n\nInclude sea creatures, coral reefs, and ocean wonders. Each page text should be 4-6 sentences, rich and descriptive.",
             ],
         ];
 

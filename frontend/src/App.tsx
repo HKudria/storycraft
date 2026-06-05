@@ -8,6 +8,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { ChildrenPage } from './pages/ChildrenPage'
 import { TemplatesPage } from './pages/TemplatesPage'
 import { NewBookPage } from './pages/NewBookPage'
+import { BookDetailPage } from './pages/BookDetailPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,14 +37,6 @@ function AuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-    </div>
-  )
-}
-
-function BookDetailPage() {
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <h1 className="text-2xl font-bold text-gray-900">Book Details</h1>
     </div>
   )
 }

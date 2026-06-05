@@ -24,4 +24,16 @@ class BookRepository extends ServiceEntityRepository
     {
         return $this->findBy(['user' => $user->getId()], ['createdAt' => 'DESC']);
     }
+
+    public function findWithPages(int $id): ?Book
+    {
+        return $this->createQueryBuilder('b')
+            ->leftJoin('b.pages', 'p')->addSelect('p')
+            ->leftJoin('b.child', 'c')->addSelect('c')
+            ->leftJoin('b.template', 't')->addSelect('t')
+            ->where('b.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

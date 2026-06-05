@@ -7,7 +7,7 @@
 | 0 | Infrastructure | Docker environment, all services running locally | **Done** |
 | 1 | Authentication | Google OAuth2, JWT, user profile | **Done** |
 | 2 | Children & Templates | Child CRUD, template catalog, story wizard UI | **Done** |
-| 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status | |
+| 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status | **Done** |
 | 4 | Illustrations & PDF | DALL-E 3, mPDF assembly, MinIO/S3 storage | |
 | 5 | Subscriptions & Billing | Stripe, plans, limits, webhooks | |
 | 6 | Referral Program | Referral codes, bonus logic | |
@@ -171,57 +171,63 @@
 ## Phase 3 — Story Text Generation
 
 ### 3.1 Backend — Books API
-- [ ] `BookController`:
+- [x] `BookController`:
   - `POST /api/books` — create book:
     1. Check `SubscriptionService::canCreateBook($user)` → 403 if over limit
     2. Create `Book` entity with `status = pending`
     3. Create `Job` entity with `type = generate_story`, `status = queued`
     4. Dispatch `GenerateStoryMessage($bookId)` to Messenger
     5. Return `{ id, status: "pending" }` with HTTP 202
-  - `GET /api/books` — list user's books (paginated, with child + template info)
-  - `GET /api/books/:id` — book detail with pages (without images if free plan)
-  - `DELETE /api/books/:id` — delete book + all S3 assets + jobs
-- [ ] `BookRepository` — `findByUser()`, `findWithPages()`
+  - `GET /api/books` — list user's books with child name + template title + childId
+  - `GET /api/books/:id` — book detail with pages (ownership check)
+  - `DELETE /api/books/:id` — delete book + jobs from DB (S3 cleanup deferred to Phase 4)
+- [x] `BookRepository` — `findByUser()`, `findWithPages()` (eager-loads pages + child + template)
 
 ### 3.2 Backend — Symfony Messenger setup
-- [ ] Configure Messenger in `config/packages/messenger.yaml`:
+- [x] Configure Messenger in `config/packages/messenger.yaml`:
   - Transport `async` → Redis (`redis://redis:6379/messages`)
   - Routing: `GenerateStoryMessage` → `async`, `GenerateIllustrationMessage` → `async`, `GeneratePdfMessage` → `async`
   - Failure transport: `failed` (also Redis) for dead-letter queue
   - Retry strategy: 3 attempts, multiplier 2, max delay 10 minutes
-- [ ] Message classes in `src/Message/`:
+- [x] Message classes in `src/Message/`:
   - `GenerateStoryMessage(int $bookId)`
   - `GenerateIllustrationMessage(int $bookId, int $pageId)`
   - `GeneratePdfMessage(int $bookId)`
 
 ### 3.3 Backend — Story generation handler
-- [ ] `GenerateStoryHandler` implements `MessageHandlerInterface`:
+- [x] `GenerateStoryHandler` with `#[AsMessageHandler]`:
   1. Load `Book` with `Child` and `Template`
   2. Update `Book.status = processing`, update `Job.status = running`
   3. Build Claude prompt from `Template.promptBlueprint` with child details substituted:
      - Child name, age, appearance, interests, pet
      - Story topic (parent-supplied)
      - Language
-     - Instructions: generate N pages, each page = JSON `{ text, imagePrompt }`
-  4. Call Claude API (`claude-sonnet-4-5`, streaming or single call)
-  5. Parse JSON response → extract pages array
+     - Instructions: generate 8 pages, each page = JSON `{ text, imagePrompt }`, 4-6 sentences per page
+  4. Call Anthropic Messages API via `AnthropicService`
+  5. Parse JSON response → extract pages array (strips ```json``` fences)
   6. Persist `Page` entities (pageNumber, text, imagePrompt)
   7. Update `Job.status = done`, `Job.finishedAt`
-  8. For each page: dispatch `GenerateIllustrationMessage($bookId, $pageId)`
+  8. Increment `Subscription.booksUsedThisMonth` on success
   9. On exception: set `Book.status = failed`, `Job.status = failed`, `Job.errorMessage`
-- [ ] `AnthropicService` — wraps Claude API HTTP calls (using `symfony/http-client`):
-  - `generateStory(string $prompt): array` — returns parsed pages
-  - Configurable model, max tokens, temperature
+- [x] `AnthropicService` — wraps Anthropic Messages API via `symfony/http-client`:
+  - `generateStory(string $prompt): array` — POST to `/v1/messages`, returns parsed JSON
+  - Configurable base URL, API key, model via env vars (`ANTHROPIC_BASE_URL`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`)
+  - `max_tokens: 8192` to accommodate longer page text
+- [x] `SubscriptionService` — `canCreateBook()`, `incrementUsage()`, auto-creates free subscription
+- [x] `BookService` — `create()`, `findForUser()` (ownership check), `listForUser()`, `delete()`
+- [x] `BookRequest` DTO with validation (childId, templateId, topic, language)
 
 ### 3.4 Frontend — Book status polling
-- [ ] After wizard submit → `POST /api/books` → redirect to `/books/:id`
-- [ ] `/books/:id` page — uses `useQuery` with `refetchInterval: 3000` while `status !== 'done' && status !== 'failed'`
-- [ ] `BookStatusBanner` component:
-  - `pending` — "Your story is in the queue…" with animated dots
-  - `processing` — "Claude is writing your story…" with progress indicator
-  - `done` — show book content
-  - `failed` — error message + "Try again" button
-- [ ] `/dashboard/books` — list of all user's books with status badges
+- [x] After wizard submit → `POST /api/books` → redirect to `/books/:id`
+- [x] `/books/:id` page — uses `useQuery` with `refetchInterval: 3000` while `status` is pending/processing
+- [x] `StatusBanner` component:
+  - `pending` — "In queue…" with spinner
+  - `processing` — "Writing your story…" with spinner
+  - `done` — "Story complete!" green banner
+  - `failed` — error message in red
+- [x] `BookDetailPage` — full page with status banner, metadata grid, pages list with text + imagePrompt
+- [x] Dashboard updated — books grouped by child with filter pills, `BookCard` with status badge
+- [x] API hooks: `useBooks`, `useBook(id)`, `useCreateBook`, `useDeleteBook`
 
 ---
 

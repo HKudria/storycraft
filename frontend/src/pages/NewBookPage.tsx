@@ -1,7 +1,8 @@
-import { useReducer, useEffect } from 'react'
+import { useReducer, useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useChildren } from '../api/children'
 import { useTemplates, useTemplate } from '../api/templates'
+import { useCreateBook } from '../api/books'
 import { useAuth } from '../hooks/useAuth'
 
 interface WizardState {
@@ -45,6 +46,24 @@ export function NewBookPage() {
 
   const { data: selectedTemplate } = useTemplate(state.templateId)
   const selectedChild = children?.find((c) => c.id === state.childId)
+  const createBook = useCreateBook()
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const handleCreate = async () => {
+    if (!state.childId || !state.templateId) return
+    try {
+      setSubmitError(null)
+      const result = await createBook.mutateAsync({
+        childId: state.childId,
+        templateId: state.templateId,
+        topic: state.topic,
+        language: state.language,
+      })
+      navigate(`/books/${result.id}`)
+    } catch (err: any) {
+      setSubmitError(err.response?.data?.error || 'Failed to create book.')
+    }
+  }
 
   useEffect(() => {
     setParams({ step: String(state.step) })
@@ -153,10 +172,11 @@ export function NewBookPage() {
           </div>
           <div className="flex gap-2 mt-4">
             <button onClick={() => dispatch({ type: 'SET_STEP', step: 3 })} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Back</button>
-            <button disabled className="px-6 py-2 bg-indigo-600 text-white rounded-lg opacity-50 cursor-not-allowed">
-              Create Storybook (coming soon)
+            <button onClick={handleCreate} disabled={createBook.isPending} className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+              {createBook.isPending ? 'Creating…' : 'Create Storybook'}
             </button>
           </div>
+          {submitError && <p className="mt-2 text-sm text-red-600">{submitError}</p>}
         </div>
       )}
       </main>

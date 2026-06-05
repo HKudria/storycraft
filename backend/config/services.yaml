@@ -19,5 +19,8 @@ services:
     App\:
         resource: '../src/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\Service\AnthropicService:
+        arguments:
+            $baseUrl: '%env(ANTHROPIC_BASE_URL)%'
+            $apiKey: '%env(ANTHROPIC_API_KEY)%'
+            $model: '%env(ANTHROPIC_MODEL)%'
