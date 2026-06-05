@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useState } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useChildren } from '../api/children'
 import { useTemplates, useTemplate } from '../api/templates'
 import { useCreateBook } from '../api/books'
@@ -170,12 +170,20 @@ export function NewBookPage() {
             <div className="p-3"><span className="text-sm text-gray-500">Language:</span> <span className="font-medium">{state.language.toUpperCase()}</span></div>
             <div className="p-3"><span className="text-sm text-gray-500">For:</span> <span className="font-medium">{user?.name}</span></div>
           </div>
-          <div className="flex gap-2 mt-4">
-            <button onClick={() => dispatch({ type: 'SET_STEP', step: 3 })} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Back</button>
-            <button onClick={handleCreate} disabled={createBook.isPending} className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50">
-              {createBook.isPending ? 'Creating…' : 'Create Storybook'}
-            </button>
-          </div>
+          {user?.canCreate === false ? (
+            <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-yellow-800 font-medium">You've reached your monthly book limit.</p>
+              <p className="text-sm text-yellow-700 mt-1">Upgrade your plan to create more stories.</p>
+              <Link to="/dashboard/billing" className="mt-3 inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm">Upgrade Plan</Link>
+            </div>
+          ) : (
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => dispatch({ type: 'SET_STEP', step: 3 })} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Back</button>
+              <button onClick={handleCreate} disabled={createBook.isPending} className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+                {createBook.isPending ? 'Creating…' : 'Create Storybook'}
+              </button>
+            </div>
+          )}
           {submitError && <p className="mt-2 text-sm text-red-600">{submitError}</p>}
         </div>
       )}

@@ -27,13 +27,16 @@ export function DashboardPage() {
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">{user?.name}</span>
             <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full capitalize">{user?.plan}</span>
+            {user?.booksLimit != null && (
+              <span className="text-xs text-gray-400">{user.booksUsed}/{user.booksLimit >= 999 ? '∞' : user.booksLimit} books</span>
+            )}
             <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">Logout</button>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Link to="/dashboard/children" className="bg-white rounded-lg border border-gray-200 p-6 hover:border-indigo-300 hover:shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900">Children</h2>
             <p className="text-sm text-gray-500 mt-1">Manage your children profiles</p>
@@ -45,6 +48,10 @@ export function DashboardPage() {
           <Link to="/books/new" className="bg-white rounded-lg border border-gray-200 p-6 hover:border-indigo-300 hover:shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900">Create Book</h2>
             <p className="text-sm text-gray-500 mt-1">Start a new storybook</p>
+          </Link>
+          <Link to="/dashboard/billing" className="bg-white rounded-lg border border-gray-200 p-6 hover:border-indigo-300 hover:shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900">Billing & Plan</h2>
+            <p className="text-sm text-gray-500 mt-1">Manage subscription & usage</p>
           </Link>
         </div>
 

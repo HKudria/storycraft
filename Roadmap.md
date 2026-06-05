@@ -8,8 +8,8 @@
 | 1 | Authentication | Google OAuth2, JWT, user profile | **Done** |
 | 2 | Children & Templates | Child CRUD, template catalog, story wizard UI | **Done** |
 | 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status | **Done** |
-| 4 | Illustrations & PDF | DALL-E 3, mPDF assembly, MinIO/S3 storage | |
-| 5 | Subscriptions & Billing | Stripe, plans, limits, webhooks | |
+| 4 | Illustrations & PDF | Cloudflare AI (Flux), mPDF assembly, MinIO/S3 storage | **Done** |
+| 5 | Subscriptions & Billing | Plans, limits, billing UI (Stripe deferred) | **Done** |
 | 6 | Referral Program | Referral codes, bonus logic | |
 | 7 | Ratings & Public Catalog | Book ratings, public catalog page | |
 | 8 | Production | CI/CD, monitoring, security hardening, deploy | |
@@ -233,57 +233,67 @@
 
 ## Phase 4 — Illustrations & PDF
 
-### 4.1 Backend — Illustration generation handler
-- [ ] `GenerateIllustrationHandler`:
-  1. Load `Page` with its `Book` and `Child`
-  2. Enrich `Page.imagePrompt` with child appearance details + style instructions:
-     - "Children's book illustration, watercolour style, child-safe, friendly characters"
-     - Child appearance description
-  3. Call DALL-E 3 API (1024×1024, `standard` quality, `vivid` style)
-  4. Download image bytes from OpenAI response URL
-  5. Upload to MinIO/S3 via `StorageService`: key = `books/{bookId}/pages/{pageId}.png`
-  6. Save `Page.imageS3Key`
-  7. Update `Job` record for this page
-  8. Check if all pages have `imageS3Key` set → if yes, dispatch `GeneratePdfMessage($bookId)`
-- [ ] `OpenAiService` — wraps DALL-E 3 API calls:
-  - `generateIllustration(string $prompt): string` — returns image URL
-  - Content policy check before dispatch (block inappropriate prompts)
+### 4.1 Backend — Storage service
+- [x] `StorageService` — dual S3Client (internal `minio:9000` for uploads, `localhost:9000` for presigned URLs)
+  - `upload()`, `getPresignedUrl()`, `delete()`
+  - Wired via env vars: `S3_ENDPOINT`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `S3_REGION`, `S3_PUBLIC_URL`
 
-### 4.2 Backend — PDF generation handler
-- [ ] `GeneratePdfHandler`:
-  1. Load `Book` with all `Pages` ordered by `pageNumber`, with presigned image URLs
-  2. Render HTML template (`Twig`) — cover page + one page per chapter
-  3. Pass HTML to mPDF:
-     - Child-friendly fonts (`Nunito` or `Patrick Hand`)
-     - Colourful borders and decorative elements
-     - Full-bleed illustrations per page
-     - Text block below illustration
-  4. Output PDF bytes
-  5. Upload PDF to S3: key = `books/{bookId}/book.pdf`
-  6. Save `Book.pdfS3Key`
-  7. Set `Book.status = done`
-  8. Increment `Subscription.booksUsedThisMonth`
-- [ ] Twig template: `templates/pdf/book.html.twig`
+### 4.2 Backend — Illustration generation
+- [x] `ImageService` — Cloudflare Workers AI (Flux Schnell model) via REST API
+  - `generateImage(prompt)` → returns base64 image data
+  - Wired via `CF_ACCOUNT_ID` + `CF_API_TOKEN`
+- [x] `GenerateIllustrationHandler` — sequential chaining pattern:
+  1. Build illustration prompt with watercolour style + child appearance
+  2. Call `ImageService` → get base64 → decode → upload to MinIO
+  3. Save `Page.imageS3Key`
+  4. Check if all pages done → dispatch `GeneratePdfMessage`, else chain next page
+- [x] `GenerateStoryHandler` updated — dispatches first illustration only, rest chain sequentially (avoids rate limits)
+- [x] `RetryIllustrationsCommand` — CLI tool to re-dispatch failed illustrations for a book
 
-### 4.3 Backend — Storage service
-- [ ] `StorageService`:
-  - `upload(string $key, string $content, string $contentType): void`
-  - `getPresignedUrl(string $key, int $ttlSeconds = 3600): string`
-  - `delete(string $key): void`
-  - `exists(string $key): bool`
-- [ ] Configured via env: in dev points to MinIO (`http://minio:9000`), in prod to real S3 endpoint — zero code change
+### 4.3 Backend — PDF generation
+- [x] `GeneratePdfHandler`:
+  1. Load Book + Pages with presigned image URLs
+  2. Render Twig HTML template (cover + pages with images + text)
+  3. Generate PDF via mPDF (A4 landscape)
+  4. Upload to MinIO, save `Book.pdfS3Key`
+- [x] Twig template: `templates/pdf/book.html.twig`
 
-### 4.4 Frontend — Book reader
-- [ ] On `Book.status = done`:
-  - **Free plan**: show text of first 2 pages, blur remaining, "Upgrade to read full story" CTA
-  - **Paid plan**: full page-by-page reader
-- [ ] `BookReader` component — prev/next navigation, page counter, full-screen mode
-- [ ] "Download PDF" button → `GET /api/books/:id/download` → presigned URL → browser download
-- [ ] Illustration images loaded from presigned URLs (short TTL, refreshed on demand)
+### 4.4 Backend — API updates
+- [x] `BookController` updated — presigned image URLs in page data, `GET /api/books/{id}/download` for PDF
+- [x] `AnthropicService` updated — system message with random session ID for unique story generation
+
+### 4.5 Frontend — Book reader
+- [x] `BookDetailPage` — inline page images, "Illustration pending" badges, Download PDF button
+- [x] Status banner adapts: generating illustrations → complete with illustrations
+- [x] `books.ts` — `imageUrl` on pages, polls at 5s while illustrations pending
 
 ---
 
 ## Phase 5 — Subscriptions & Billing
+
+### 5.1 Backend — Subscription logic
+- [x] `SubscriptionService` enhanced:
+  - `PLAN_LIMITS` constant: free=1, basic=5, pro=999
+  - `getSubscriptionInfo(User)` — returns `{ plan, status, booksUsed, booksLimit, canCreate }`
+  - `changePlan(User, plan)` — updates plan + booksLimit
+  - `resetMonthlyUsage(User)` — zeroes booksUsedThisMonth
+- [x] `AuthController::me()` — returns `booksUsed`, `booksLimit`, `canCreate` alongside plan
+- [x] `SubscriptionController`:
+  - `GET /api/subscription` — current plan, status, usage, canCreate
+  - `POST /api/subscription/checkout` — mocked: directly upgrades plan, returns success URL (Stripe deferred)
+  - `POST /api/subscription/portal` — mocked: returns billing page URL
+  - `POST /api/webhooks/stripe` — mocked: acknowledges receipt
+- [x] `security.yaml` — public access for `/api/webhooks/`
+
+### 5.2 Frontend — Billing pages
+- [x] `useSubscription()` hook — `GET /api/subscription`
+- [x] `useCheckout()` mutation — `POST /api/subscription/checkout`
+- [x] `/pricing` — public plan comparison page (Free/Basic/Pro table)
+- [x] `/dashboard/billing` — current plan badge, usage meter, upgrade/downgrade buttons
+- [x] `/billing/success` — confirmation + redirect to billing page
+- [x] Dashboard — usage meter in header (X/Y books), "Billing & Plan" card
+- [x] `NewBookPage` step 4 — upgrade prompt when book limit reached
+- [x] `useAuth` User type — includes `booksUsed`, `booksLimit`, `canCreate`
 
 ### 5.1 Backend — Stripe integration
 - [ ] Create products and prices in Stripe Dashboard: Free, Basic ($9.99/mo), Pro ($19.99/mo)

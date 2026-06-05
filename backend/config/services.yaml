@@ -38,3 +38,7 @@ services:
             $bucket: '%env(S3_BUCKET)%'
             $region: '%env(S3_REGION)%'
             $publicUrl: '%env(S3_PUBLIC_URL)%'
+
+    App\Controller\SubscriptionController:
+        arguments:
+            $frontendUrl: '%env(APP_FRONTEND_URL)%'

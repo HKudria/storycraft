@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Security\AuthService;
+use App\Service\SubscriptionService;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +18,7 @@ class AuthController extends AbstractController
     public function __construct(
         private readonly AuthService $authService,
         private readonly EntityManagerInterface $em,
+        private readonly SubscriptionService $subscriptionService,
     ) {
     }
 
@@ -110,13 +112,17 @@ class AuthController extends AbstractController
     public function me(): JsonResponse
     {
         $user = $this->getUser();
+        $sub = $this->subscriptionService->getSubscriptionInfo($user);
 
         return new JsonResponse([
             'id' => $user->getId(),
             'email' => $user->getEmail(),
             'name' => $user->getName(),
             'avatarUrl' => $user->getAvatarUrl(),
-            'plan' => $user->getSubscription()?->getPlan() ?? 'free',
+            'plan' => $sub['plan'],
+            'booksUsed' => $sub['booksUsed'],
+            'booksLimit' => $sub['booksLimit'],
+            'canCreate' => $sub['canCreate'],
         ]);
     }
 

@@ -8,6 +8,9 @@ interface User {
   name: string
   avatarUrl: string | null
   plan: string
+  booksUsed: number
+  booksLimit: number
+  canCreate: boolean
 }
 
 interface AuthContextType {
