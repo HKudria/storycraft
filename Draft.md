@@ -251,3 +251,55 @@ storycraft/
 ---
 
 *This document is updated as development progresses.*
+
+---
+
+## API Reference
+
+### Authentication
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/api/auth/google` | No | Redirect to Google OAuth consent screen |
+| GET | `/api/auth/google/callback` | No | Google OAuth callback, issues JWT + refresh cookie |
+| POST | `/api/auth/dev-login` | No | Dev-only: creates/finds mock user, issues JWT (dev env only) |
+| POST | `/api/auth/refresh` | Cookie | Refresh access token using httpOnly refresh cookie |
+| POST | `/api/auth/logout` | JWT | Invalidate refresh token, clear cookie |
+| GET | `/api/auth/me` | JWT | Return current user profile (id, email, name, avatarUrl, plan) |
+
+### Children
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/api/children` | JWT | List current user's children (excludes soft-deleted) |
+| POST | `/api/children` | JWT | Create child (name, age required; gender, appearance, interests, petName optional) |
+| GET | `/api/children/{id}` | JWT | Get child detail (ownership check) |
+| PUT | `/api/children/{id}` | JWT | Update child (ownership check) |
+| DELETE | `/api/children/{id}` | JWT | Soft delete child (ownership check) |
+
+### Templates
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/api/templates` | No | List active templates. Query: `?category=&ageMin=&ageMax=` |
+| GET | `/api/templates/{id}` | No | Template detail |
+
+### System
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/api/health` | No | Health check (status, db, redis) |
+
+---
+
+## Frontend Routes
+
+| Path | Auth | Page |
+|---|---|---|
+| `/login` | No | Login page (Google OAuth + dev login) |
+| `/auth/callback` | No | OAuth callback handler (stores token from URL) |
+| `/dashboard` | Yes | Dashboard with navigation cards |
+| `/dashboard/children` | Yes | Children management (add, edit, delete) |
+| `/templates` | No | Template catalog with category filters |
+| `/books/new` | Yes | 4-step story wizard (child → template → customise → review) |
+| `/books/:id` | Yes | Book detail (placeholder) |

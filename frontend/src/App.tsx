@@ -4,6 +4,10 @@ import { useEffect } from 'react'
 import { AuthProvider, useAuth } from './hooks/useAuth.tsx'
 import { AuthGuard } from './components/AuthGuard'
 import { LoginPage } from './pages/LoginPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { ChildrenPage } from './pages/ChildrenPage'
+import { TemplatesPage } from './pages/TemplatesPage'
+import { NewBookPage } from './pages/NewBookPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,28 +40,6 @@ function AuthCallbackPage() {
   )
 }
 
-function DashboardPage() {
-  const { user, logout } = useAuth()
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">StoryCraft</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{user?.name}</span>
-            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full capitalize">{user?.plan}</span>
-            <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">Logout</button>
-          </div>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <p className="text-gray-600">Welcome to StoryCraft</p>
-      </main>
-    </div>
-  )
-}
-
 function BookDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -75,7 +57,10 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
+            <Route path="/templates" element={<TemplatesPage />} />
             <Route path="/dashboard" element={<AuthGuard><DashboardPage /></AuthGuard>} />
+            <Route path="/dashboard/children" element={<AuthGuard><ChildrenPage /></AuthGuard>} />
+            <Route path="/books/new" element={<AuthGuard><NewBookPage /></AuthGuard>} />
             <Route path="/books/:id" element={<AuthGuard><BookDetailPage /></AuthGuard>} />
           </Routes>
         </AuthProvider>

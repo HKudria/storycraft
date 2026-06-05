@@ -6,7 +6,7 @@
 |---|---|---|---|
 | 0 | Infrastructure | Docker environment, all services running locally | **Done** |
 | 1 | Authentication | Google OAuth2, JWT, user profile | **Done** |
-| 2 | Children & Templates | Child CRUD, template catalog, story wizard UI | |
+| 2 | Children & Templates | Child CRUD, template catalog, story wizard UI | **Done** |
 | 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status | |
 | 4 | Illustrations & PDF | DALL-E 3, mPDF assembly, MinIO/S3 storage | |
 | 5 | Subscriptions & Billing | Stripe, plans, limits, webhooks | |
@@ -124,39 +124,47 @@
 ## Phase 2 — Children & Templates
 
 ### 2.1 Backend — Children CRUD
-- [ ] `ChildController` with routes:
-  - `GET /api/children` — list current user's children
+- [x] `ChildController` with routes:
+  - `GET /api/children` — list current user's children (excludes soft-deleted)
   - `POST /api/children` — create child (validate: name required, age 1–18)
   - `GET /api/children/:id` — get child (ownership check)
   - `PUT /api/children/:id` — update child
   - `DELETE /api/children/:id` — soft delete (`deletedAt` timestamp)
-- [ ] `ChildService` — all business logic, always scopes queries by `userId`
-- [ ] `ChildRepository` — `findByUser(User $user): array`
-- [ ] Request DTOs with `symfony/validator` constraints
+- [x] `ChildService` — all business logic, always scopes queries by `userId`, ownership checks
+- [x] `ChildRepository` — `findByUser()` filters out soft-deleted records
+- [x] `ChildRequest` DTO with `symfony/validator` constraints (`#[MapRequestPayload]`)
+- [x] `Child` entity — added `deletedAt` column with migration
 
 ### 2.2 Backend — Templates
-- [ ] `TemplateController` with routes:
-  - `GET /api/templates` — list active templates (public, no auth required)
+- [x] `TemplateController` with routes:
+  - `GET /api/templates` — list active templates (public, no auth required), query filters: `?category=&ageMin=&ageMax=`
   - `GET /api/templates/:id` — template detail
-- [ ] Query filters: `?category=`, `?ageMin=`, `?ageMax=`
-- [ ] Templates are read-only via API (managed via fixtures/migrations)
+- [x] `TemplateRepository::findFiltered()` — filtered query by category and age range
+- [x] Templates are read-only via API (managed via fixtures/migrations)
+- [x] Added `^/api/templates` to `PUBLIC_ACCESS` in security.yaml
 
 ### 2.3 Frontend — Children management
-- [ ] `/dashboard/children` page — list of children cards
-- [ ] `ChildCard` component — avatar (initials), name, age
-- [ ] `AddChildModal` — form: name, age, gender, appearance description, interests, pet name
-- [ ] `EditChildModal` — same form pre-filled
-- [ ] Delete confirmation dialog
+- [x] `/dashboard/children` page — list of children cards with header layout and back navigation
+- [x] `ChildCard` component — avatar (initials), name, age, gender, edit/delete actions
+- [x] `ChildModal` component — unified add/edit form using `react-hook-form` + `zod`
+- [x] Delete confirmation dialog
+- [x] API hooks: `useChildren`, `useCreateChild`, `useUpdateChild`, `useDeleteChild` via TanStack Query
 
 ### 2.4 Frontend — Template catalog & story wizard
-- [ ] `/templates` page — grid of `TemplateCard` components with category filter tabs
-- [ ] `TemplateCard` — cover image, title, description, age range badge
-- [ ] `/books/new` — multi-step wizard:
-  - Step 1: Select child (or add new inline)
-  - Step 2: Select template
-  - Step 3: Customise — topic, language (EN/PL/DE/FR), any extra details
-  - Step 4: Review & confirm (show plan limit warning if needed)
-- [ ] Wizard state managed with `useReducer` + URL params for deep-linking
+- [x] `/templates` page — grid of `TemplateCard` components with category filter tabs
+- [x] `TemplateCard` — title, description, category badge, age range badge, "Use template" button
+- [x] `/books/new` — multi-step wizard:
+  - Step 1: Select child (or link to add new)
+  - Step 2: Select template (pre-selected via `?templateId=` query param)
+  - Step 3: Customise — topic, language (EN/PL/DE/FR)
+  - Step 4: Review — summary of all selections
+- [x] Wizard state managed with `useReducer` + URL params for deep-linking
+- [x] "Create Storybook" button disabled as placeholder (wired in Phase 3)
+- [x] API hooks: `useTemplates(filters)`, `useTemplate(id)` via TanStack Query
+
+### 2.5 Frontend — Dashboard navigation
+- [x] `/dashboard` page — card links to Children, Templates, Create Book
+- [x] All pages use consistent layout with header and back navigation
 
 ---
 
