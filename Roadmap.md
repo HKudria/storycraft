@@ -2,27 +2,27 @@
 
 ## Phase Overview
 
-| Phase | Name | Deliverable |
-|---|---|---|
-| 0 | Infrastructure | Docker environment, all services running locally |
-| 1 | Authentication | Google OAuth2, JWT, user profile |
-| 2 | Children & Templates | Child CRUD, template catalog, story wizard UI |
-| 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status |
-| 4 | Illustrations & PDF | DALL-E 3, mPDF assembly, MinIO/S3 storage |
-| 5 | Subscriptions & Billing | Stripe, plans, limits, webhooks |
-| 6 | Referral Program | Referral codes, bonus logic |
-| 7 | Ratings & Public Catalog | Book ratings, public catalog page |
-| 8 | Production | CI/CD, monitoring, security hardening, deploy |
+| Phase | Name | Deliverable | Status |
+|---|---|---|---|
+| 0 | Infrastructure | Docker environment, all services running locally | **Done** |
+| 1 | Authentication | Google OAuth2, JWT, user profile | **Done** |
+| 2 | Children & Templates | Child CRUD, template catalog, story wizard UI | |
+| 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status | |
+| 4 | Illustrations & PDF | DALL-E 3, mPDF assembly, MinIO/S3 storage | |
+| 5 | Subscriptions & Billing | Stripe, plans, limits, webhooks | |
+| 6 | Referral Program | Referral codes, bonus logic | |
+| 7 | Ratings & Public Catalog | Book ratings, public catalog page | |
+| 8 | Production | CI/CD, monitoring, security hardening, deploy | |
 
 ---
 
 ## Phase 0 — Infrastructure & Scaffolding
 
 ### 0.1 Monorepo structure
-- [ ] Create root layout: `storycraft/backend/`, `storycraft/frontend/`, `storycraft/nginx/`
-- [ ] Root `.gitignore` (ignore `.env`, `vendor/`, `node_modules/`, `var/`, `public/build/`)
-- [ ] Root `.env.example` with all required variables documented
-- [ ] `Makefile` with shortcuts:
+- [x] Create root layout: `storycraft/backend/`, `storycraft/frontend/`, `storycraft/nginx/`
+- [x] Root `.gitignore` (ignore `.env`, `vendor/`, `node_modules/`, `var/`, `public/build/`)
+- [x] Root `.env.example` with all required variables documented
+- [x] `Makefile` with shortcuts:
   - `make up` — `docker compose up -d`
   - `make down` — `docker compose down`
   - `make logs` — `docker compose logs -f`
@@ -32,24 +32,24 @@
   - `make shell-front` — bash into frontend container
 
 ### 0.2 Docker Compose (`docker-compose.yml`)
-- [ ] Service `postgres` — postgres:16, named volume, healthcheck (`pg_isready`)
-- [ ] Service `redis` — redis:7-alpine, named volume, `maxmemory-policy allkeys-lru`
-- [ ] Service `minio` — minio/minio, named volume, ports 9000 (API) + 9001 (console), auto-create bucket via `minio/mc` init container
-- [ ] Service `php-fpm` — custom Dockerfile, mounts `./backend`, depends on postgres + redis
-- [ ] Service `worker` — same image as php-fpm, entrypoint `bin/console messenger:consume async --time-limit=3600`, depends on php-fpm
-- [ ] Service `frontend` — custom Dockerfile, mounts `./frontend`, port 5173, Vite dev server
-- [ ] Service `nginx` — nginx:alpine, mounts `./nginx/default.conf`, port 80, depends on php-fpm + frontend
-- [ ] All services on a shared `storycraft_network` bridge network
-- [ ] Named volumes: `postgres_data`, `redis_data`, `minio_data`
+- [x] Service `postgres` — postgres:16, named volume, healthcheck (`pg_isready`)
+- [x] Service `redis` — redis:7-alpine, named volume, `maxmemory-policy allkeys-lru`
+- [x] Service `minio` — minio/minio, named volume, ports 9000 (API) + 9001 (console), auto-create bucket via `minio/mc` init container
+- [x] Service `php-fpm` — custom Dockerfile, mounts `./backend`, depends on postgres + redis
+- [x] Service `worker` — same image as php-fpm, entrypoint `bin/console messenger:consume async --time-limit=3600`, depends on php-fpm
+- [x] Service `frontend` — custom Dockerfile, mounts `./frontend`, port 5173, Vite dev server
+- [x] Service `nginx` — nginx:alpine, mounts `./nginx/default.conf`, port 80, depends on php-fpm + frontend
+- [x] All services on a shared `storycraft_network` bridge network
+- [x] Named volumes: `postgres_data`, `redis_data`, `minio_data`
 
 ### 0.3 Nginx config (`nginx/default.conf`)
-- [ ] `location /api/` → `fastcgi_pass php-fpm:9000` (PHP-FPM with Symfony front controller)
-- [ ] `location /` → `proxy_pass http://frontend:5173` (Vite dev) with WebSocket upgrade for HMR
-- [ ] Gzip, client max body size 20MB (for future image uploads)
+- [x] `location /api/` → `fastcgi_pass php-fpm:9000` (PHP-FPM with Symfony front controller)
+- [x] `location /` → `proxy_pass http://frontend:5173` (Vite dev) with WebSocket upgrade for HMR
+- [x] Gzip, client max body size 20MB (for future image uploads)
 
-### 0.4 Backend — Symfony 7 scaffold (`backend/`)
-- [ ] `composer create-project symfony/skeleton backend`
-- [ ] Install packages:
+### 0.4 Backend — Symfony 8 scaffold (`backend/`) *(upgraded from PHP 8.3/Symfony 7 to PHP 8.4/Symfony 8.1)*
+- [x] `composer create-project symfony/skeleton backend`
+- [x] Install packages:
   - `symfony/orm-pack` — Doctrine ORM + DBAL
   - `lexik/jwt-authentication-bundle` — JWT
   - `knpuniversity/oauth2-client-bundle` + `league/oauth2-google` — Google OAuth2
@@ -61,56 +61,63 @@
   - `nelmio/cors-bundle` — CORS headers
   - `symfony/serializer-pack` — JSON serialization
   - `symfony/validator` — request validation
-- [ ] `backend/Dockerfile` — php:8.3-fpm, install extensions: `pdo_pgsql`, `redis`, `intl`, `zip`, `gd`, install `composer`
-- [ ] Configure `.env`: `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `S3_ENDPOINT`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `APP_FRONTEND_URL`
-- [ ] Healthcheck endpoint: `GET /api/health` → `{ status: "ok", db: "ok", redis: "ok" }`
+- [x] `backend/Dockerfile` — php:8.4-fpm, install extensions: `pdo_pgsql`, `redis`, `intl`, `zip`, `gd`, install `composer`
+- [x] Configure `.env`: `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `S3_ENDPOINT`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `APP_FRONTEND_URL`
+- [x] Healthcheck endpoint: `GET /api/health` → `{ status: "ok", db: "ok", redis: "ok" }`
 
 ### 0.5 Frontend — React scaffold (`frontend/`)
-- [ ] `npm create vite@latest frontend -- --template react-ts`
-- [ ] Install packages:
+- [x] `npm create vite@latest frontend -- --template react-ts`
+- [x] Install packages:
   - `@tanstack/react-query` — server state + polling
   - `react-router-dom` — routing
   - `axios` — HTTP client
-  - `tailwindcss` + `@tailwindcss/typography` — styling
+  - `tailwindcss` + `@tailwindcss/vite` — styling
   - `zod` — schema validation for forms
   - `react-hook-form` + `@hookform/resolvers` — form management
-- [ ] `frontend/Dockerfile` — node:20-alpine, dev stage (Vite) + prod stage (Nginx + built assets)
-- [ ] Configure Vite proxy: `/api` → `http://nginx:80` (in dev, to avoid CORS)
-- [ ] Setup `axios` instance: base URL `/api`, request interceptor to attach JWT from cookie/localStorage, response interceptor to handle 401 → refresh token
-- [ ] Setup `QueryClientProvider` in `main.tsx`
-- [ ] Base routing in `App.tsx`: `/`, `/login`, `/dashboard`, `/books/:id`
+- [x] `frontend/Dockerfile` — node:20-alpine, dev stage (Vite)
+- [x] Configure Vite proxy: `/api` → `http://nginx:80` (in dev, to avoid CORS)
+- [x] Setup `axios` instance: base URL `/api`, request interceptor to attach JWT from cookie/localStorage, response interceptor to handle 401 → refresh token
+- [x] Setup `QueryClientProvider` in `main.tsx`
+- [x] Base routing in `App.tsx`: `/`, `/login`, `/dashboard`, `/books/:id`
 
 ### 0.6 Database — Doctrine entities v1
-- [ ] Create all entities in `src/Entity/`: `User`, `Child`, `Template`, `Book`, `Page`, `Job`, `Subscription`, `Rating`, `Referral`
-- [ ] Define all relationships with Doctrine annotations/attributes
-- [ ] Generate and run first migration: `bin/console doctrine:migrations:diff && bin/console doctrine:migrations:migrate`
-- [ ] Data fixtures (`DoctrineFixturesBundle`): seed 6 `Template` records (Adventure, Bedtime, Educational, Fairy Tale, Space, Ocean)
+- [x] Create all entities in `src/Entity/`: `User`, `Child`, `Template`, `Book`, `Page`, `Job`, `Subscription`, `Rating`, `Referral`
+- [x] Define all relationships with Doctrine annotations/attributes
+- [x] Generate and run first migration: `bin/console doctrine:migrations:diff && bin/console doctrine:migrations:migrate`
+- [x] Data fixtures (`DoctrineFixturesBundle`): seed 6 `Template` records (Adventure, Bedtime, Educational, Fairy Tale, Space, Ocean)
 
 ---
 
 ## Phase 1 — Authentication
 
 ### 1.1 Backend — Google OAuth2 flow
-- [ ] Configure `knpuniversity/oauth2-client-bundle` for Google provider in `config/packages/knpu_oauth2_client.yaml`
-- [ ] `src/Security/GoogleAuthenticator.php` — custom `AbstractAuthenticator`:
-  - `supports()` — matches `/api/auth/google/callback`
-  - `authenticate()` — exchanges code for Google user info via KnpU client
-  - `onAuthenticationSuccess()` — calls `AuthService::findOrCreateUser()`, issues JWT
-- [ ] `AuthService::findOrCreateUser(array $googleUser): User` — upsert by `googleId`
-- [ ] `AuthService::issueTokens(User $user): array` — generate `accessToken` (JWT, 15min) + `refreshToken` (random string, stored in `User.refreshToken`, 7 days TTL)
-- [ ] `GET /api/auth/google` — redirect to Google consent screen
-- [ ] `GET /api/auth/google/callback` — handled by `GoogleAuthenticator`, on success redirect to `{FRONTEND_URL}/auth/callback?token=...`
-- [ ] `POST /api/auth/refresh` — validate `refreshToken`, issue new `accessToken`
-- [ ] `POST /api/auth/logout` — clear `refreshToken` in DB
-- [ ] `GET /api/auth/me` — return current user from JWT (protected by `JWTTokenAuthenticator`)
+- [x] Configure `knpuniversity/oauth2-client-bundle` for Google provider in `config/packages/knpu_oauth2_client.yaml`
+- [x] `src/Security/AuthService.php` — handles user upsert, token issuance/refresh/invalidation
+  - `findOrCreateUser()` — upsert by `googleId`
+  - `issueTokens()` — generate `accessToken` (JWT) + `refreshToken` (random, stored in DB, 7 days TTL)
+  - `refreshAccessToken()` — validate `refreshToken`, issue new `accessToken`
+  - `invalidateRefreshToken()` — clear `refreshToken` in DB
+- [x] `src/Controller/AuthController.php` — all auth endpoints:
+  - `GET /api/auth/google` — redirect to Google consent screen
+  - `GET /api/auth/google/callback` — exchange code, upsert user, set refresh cookie, redirect to frontend
+  - `POST /api/auth/refresh` — validate `refreshToken` from cookie, issue new `accessToken`
+  - `POST /api/auth/logout` — clear `refreshToken` in DB + clear cookie
+  - `GET /api/auth/me` — return current user from JWT
+  - `POST /api/auth/dev-login` — dev-only email+name login (bypass Google OAuth)
+- [x] `User` entity implements `UserInterface`, `roles` JSON column added
+- [x] `UserRepository` — `findByGoogleId()`, `findByEmail()`, `findByRefreshToken()`
+- [x] `security.yaml` — Doctrine user provider, stateless JWT firewall on `/api/`, public auth/health routes
+- [x] `refreshToken` sent as `httpOnly` cookie via `Set-Cookie` header
 
 ### 1.2 Frontend — Auth flow
-- [ ] `/login` page — "Continue with Google" button → redirects to `GET /api/auth/google`
-- [ ] `/auth/callback` page — reads `?token=` from URL, stores `accessToken` in memory + `refreshToken` in `httpOnly` cookie (set by backend), redirects to `/dashboard`
-- [ ] `useAuth()` hook — `{ user, isLoading, isAuthenticated, logout }`
-- [ ] `AuthGuard` component — wraps protected routes, redirects to `/login` if not authenticated
-- [ ] `AxiosInterceptor` — attach `Authorization: Bearer <token>` to every request; on 401 → call refresh endpoint → retry original request → if refresh fails → redirect to `/login`
-- [ ] `/dashboard` page — shows user avatar, name, current plan badge
+- [x] `/login` page — "Continue with Google" button → redirects to `GET /api/auth/google`
+- [x] Dev login form — email + name fields, calls `POST /api/auth/dev-login` (dev mode only)
+- [x] `/auth/callback` page — reads `?token=` from URL, stores `accessToken` in localStorage, redirects to `/dashboard`
+- [x] `useAuth()` hook — `{ user, isLoading, isAuthenticated, logout, loginWithToken }`
+- [x] `AuthProvider` — React context wrapping app, auto-fetches `/auth/me` on load
+- [x] `AuthGuard` component — wraps protected routes, redirects to `/login` if not authenticated
+- [x] `AxiosInterceptor` — attach `Authorization: Bearer <token>` to every request; on 401 → call refresh endpoint with mutex → retry original request → if refresh fails → redirect to `/login`
+- [x] `/dashboard` page — shows user avatar, name, current plan badge, logout button
 
 ---
 

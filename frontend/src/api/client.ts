@@ -13,20 +13,33 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+let refreshPromise: Promise<string> | null = null
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401 && !error.config._retry) {
       error.config._retry = true
-      try {
-        const { data } = await api.post('/auth/refresh')
-        localStorage.setItem('accessToken', data.accessToken)
-        error.config.headers.Authorization = `Bearer ${data.accessToken}`
-        return api(error.config)
-      } catch {
-        localStorage.removeItem('accessToken')
-        window.location.href = '/login'
+
+      if (!refreshPromise) {
+        refreshPromise = api.post('/auth/refresh')
+          .then(({ data }) => {
+            localStorage.setItem('accessToken', data.accessToken)
+            return data.accessToken as string
+          })
+          .catch(() => {
+            localStorage.removeItem('accessToken')
+            window.location.href = '/login'
+            throw error
+          })
+          .finally(() => {
+            refreshPromise = null
+          })
       }
+
+      const newToken = await refreshPromise
+      error.config.headers.Authorization = `Bearer ${newToken}`
+      return api(error.config)
     }
     return Promise.reject(error)
   }

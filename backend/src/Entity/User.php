@@ -6,10 +6,11 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,6 +34,9 @@ class User
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $refreshToken = null;
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = ['ROLE_USER'];
 
     #[ORM\OneToMany(targetEntity: Child::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $children;
@@ -109,4 +113,9 @@ class User
 
     /** @return Collection<int, Referral> */
     public function getReferralsReceived(): Collection { return $this->referralsReceived; }
+
+    public function getUserIdentifier(): string { return $this->email; }
+    public function getRoles(): array { return $this->roles; }
+    public function setRoles(array $roles): static { $this->roles = $roles; return $this; }
+    public function eraseCredentials(): void {}
 }
