@@ -129,7 +129,9 @@ function BookCard({ book }: { book: BookData }) {
         <h3 className="font-medium text-gray-900 line-clamp-1">{book.title || book.topic}</h3>
         <span className={`text-xs px-2 py-0.5 rounded-full capitalize ml-2 shrink-0 ${statusColors[book.status] || ''}`}>{book.status}</span>
       </div>
+      {book.title && book.title !== book.topic && (
       <p className="text-sm text-gray-500 line-clamp-2">{book.topic}</p>
+      )}
       <div className="flex items-center gap-2 mt-3 text-xs text-gray-400">
         <span>{book.childName}</span>
         <span>·</span>

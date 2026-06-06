@@ -28,10 +28,10 @@ The target audience is parents who want to give their child a unique, meaningful
 - **KnpU OAuth2 Client Bundle** — Google OAuth2 integration
 - **Stripe PHP SDK** — subscription management, webhook handling
 - **AWS SDK for PHP** — S3/MinIO file storage (images, PDFs)
-- **mPDF** — PDF generation from HTML templates
+- **mPDF** — PDF generation from HTML templates with GD-based image vignette effect
 
 ### Frontend — React 18 + TypeScript
-- **React 18** + **TypeScript** — component-based UI with full type safety
+- **React 19** + **TypeScript** — component-based UI with full type safety
 - **Vite** — fast dev server and production bundler
 - **TailwindCSS** — utility-first styling
 - **React Query (TanStack Query)** — server state management, polling for job status
@@ -40,7 +40,7 @@ The target audience is parents who want to give their child a unique, meaningful
 
 ### AI Services
 - **Anthropic Claude API** — personalised story text generation, multi-language support, age-appropriate narratives, per-page illustration prompt generation
-- **OpenAI DALL-E 3** — per-page illustration generation in a child-friendly illustration style
+- **OpenAI DALL-E 3 / Cloudflare Workers AI (Flux Schnell) / Gemini** — per-page illustration generation in a child-friendly illustration style (swappable via `IMAGE_PROVIDER` env var)
 
 ### Infrastructure
 - **PostgreSQL 16** — primary relational database
@@ -302,4 +302,28 @@ storycraft/
 | `/dashboard/children` | Yes | Children management (add, edit, delete) |
 | `/templates` | No | Template catalog with category filters |
 | `/books/new` | Yes | 4-step story wizard (child → template → customise → review) |
-| `/books/:id` | Yes | Book detail (placeholder) |
+| `/books/:id` | Yes | Book detail with pages, illustrations, PDF download |
+| `/pricing` | No | Plan comparison page |
+| `/dashboard/billing` | Yes | Billing page with plan management and revert |
+| `/billing/success` | Yes | Payment success confirmation |
+
+### Subscriptions
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/api/subscription` | JWT | Current plan, status, usage, canCreate, pendingPlan |
+| POST | `/api/subscription/checkout` | JWT | Create Stripe Checkout Session, returns `{ url }` |
+| POST | `/api/subscription/portal` | JWT | Create Stripe Customer Portal session, returns `{ url }` |
+| POST | `/api/subscription/change` | JWT | Schedule plan change (upgrade immediately, downgrade at period end) |
+| POST | `/api/subscription/revert` | JWT | Cancel pending plan change / revert cancellation |
+| POST | `/api/webhooks/stripe` | Webhook | Stripe webhook handler (signature verified) |
+
+### Books
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/api/books` | JWT | Create book (checks subscription limit, dispatches story generation) |
+| GET | `/api/books` | JWT | List user's books with child name, template title, status |
+| GET | `/api/books/{id}` | JWT | Book detail with pages (presigned image URLs) |
+| DELETE | `/api/books/{id}` | JWT | Delete book |
+| GET | `/api/books/{id}/download` | JWT | Download generated PDF |

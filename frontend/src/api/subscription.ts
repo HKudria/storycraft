@@ -59,3 +59,17 @@ export async function syncSubscription(sessionId?: string) {
   })
   return data
 }
+
+export function useRevertChange() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post<{ success: boolean }>('/subscription/revert')
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+    },
+  })
+}

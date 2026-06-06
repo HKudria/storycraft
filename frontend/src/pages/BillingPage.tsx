@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { useSubscription, useCheckout, useChangePlan } from '../api/subscription'
+import { useSubscription, useCheckout, useChangePlan, useRevertChange } from '../api/subscription'
 
 const planNames: Record<string, string> = { free: 'Free', basic: 'Basic', pro: 'Pro' }
 const planPrices: Record<string, string> = { free: '$0/mo', basic: '$9.99/mo', pro: '$19.99/mo' }
@@ -11,6 +11,7 @@ export function BillingPage() {
   const { data: sub } = useSubscription()
   const checkout = useCheckout()
   const changePlan = useChangePlan()
+  const revertChange = useRevertChange()
 
   const handlePlanChange = async (plan: string) => {
     const currentRank = { free: 0, basic: 1, pro: 2 }[sub?.plan ?? 'free'] ?? 0
@@ -36,7 +37,7 @@ export function BillingPage() {
   const periodEnd = sub?.currentPeriodEnd ?? user?.currentPeriodEnd ?? null
   const pendingPlan = sub?.pendingPlan ?? user?.pendingPlan ?? null
   const cancelAtPeriodEnd = sub?.cancelAtPeriodEnd ?? user?.cancelAtPeriodEnd ?? false
-  const isLoading = checkout.isPending || changePlan.isPending
+  const isLoading = checkout.isPending || changePlan.isPending || revertChange.isPending
 
   const formatDate = (iso: string | null) => {
     if (!iso) return ''
@@ -68,12 +69,36 @@ export function BillingPage() {
           </div>
 
           {cancelAtPeriodEnd && (
-            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between">
               <p className="text-sm text-amber-800">
-                Your subscription will {pendingPlan === 'free' ? 'be cancelled' : `change to ${planNames[pendingPlan ?? 'Free']}`}
+                Your subscription will be cancelled
                 {periodEnd ? ` on ${formatDate(periodEnd)}` : ' at the end of the billing period'}.
                 You can continue using {planNames[currentPlan]} until then.
               </p>
+              <button
+                onClick={() => revertChange.mutate()}
+                disabled={isLoading}
+                className="text-sm text-amber-800 hover:text-amber-900 font-medium disabled:opacity-50 whitespace-nowrap ml-4"
+              >
+                Keep {planNames[currentPlan]}
+              </button>
+            </div>
+          )}
+
+          {pendingPlan && pendingPlan !== 'free' && !cancelAtPeriodEnd && (
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between">
+              <p className="text-sm text-amber-800">
+                Plan changes to {planNames[pendingPlan ?? '']} on your next billing date
+                {periodEnd ? ` (${formatDate(periodEnd)})` : ''}.
+                You can continue using {planNames[currentPlan]} until then.
+              </p>
+              <button
+                onClick={() => revertChange.mutate()}
+                disabled={isLoading}
+                className="text-sm text-amber-800 hover:text-amber-900 font-medium disabled:opacity-50 whitespace-nowrap ml-4"
+              >
+                Keep {planNames[currentPlan]}
+              </button>
             </div>
           )}
 

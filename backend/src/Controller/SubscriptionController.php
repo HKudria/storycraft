@@ -240,6 +240,55 @@ class SubscriptionController extends AbstractController
         return [$periodStart ? (int) $periodStart : null, $periodEnd ? (int) $periodEnd : null];
     }
 
+    #[Route('/api/subscription/revert', name: 'subscription_revert', methods: ['POST'])]
+    public function revert(): JsonResponse
+    {
+        $user = $this->getUser();
+        $sub = $user->getSubscription();
+
+        if (!$sub || !$sub->getPendingPlan()) {
+            return new JsonResponse(['error' => 'No pending change to revert.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        Stripe::setApiKey($this->stripeKey);
+
+        // No Stripe subscription — just clear locally (dev mode)
+        if (!$sub->getStripeSubscriptionId()) {
+            $sub->setPendingPlan(null)->setCancelAtPeriodEnd(false);
+            $this->subscriptionService->em()->persist($sub);
+            $this->subscriptionService->em()->flush();
+            return new JsonResponse(['success' => true]);
+        }
+
+        try {
+            if ($sub->isCancelAtPeriodEnd()) {
+                // Revert cancellation to free — remove cancel_at_period_end
+                StripeSubscription::update($sub->getStripeSubscriptionId(), [
+                    'cancel_at_period_end' => false,
+                ]);
+            } else {
+                // Revert downgrade — restore original price
+                $currentPriceId = $this->subscriptionService->getPlanPriceId($sub->getPlan());
+                $stripeSub = StripeSubscription::retrieve($sub->getStripeSubscriptionId());
+                StripeSubscription::update($sub->getStripeSubscriptionId(), [
+                    'items' => [[
+                        'id' => $stripeSub->items->data[0]->id,
+                        'price' => $currentPriceId,
+                    ]],
+                    'proration_behavior' => 'none',
+                ]);
+            }
+
+            $sub->setPendingPlan(null)->setCancelAtPeriodEnd(false);
+            $this->subscriptionService->em()->persist($sub);
+            $this->subscriptionService->em()->flush();
+
+            return new JsonResponse(['success' => true]);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private function scheduleChange(?Subscription $sub, string $targetPlan): JsonResponse
     {
         if (!$sub) {
@@ -254,10 +303,14 @@ class SubscriptionController extends AbstractController
 
         try {
             if ($targetPlan === Subscription::PLAN_FREE) {
+                // Cancel: subscription deleted at period end
                 StripeSubscription::update($sub->getStripeSubscriptionId(), [
                     'cancel_at_period_end' => true,
                 ]);
+                $sub->setPendingPlan($targetPlan)
+                    ->setCancelAtPeriodEnd(true);
             } else {
+                // Downgrade: change price for next billing cycle, subscription continues
                 $targetPriceId = $this->subscriptionService->getPlanPriceId($targetPlan);
                 $stripeSub = StripeSubscription::retrieve($sub->getStripeSubscriptionId());
                 StripeSubscription::update($sub->getStripeSubscriptionId(), [
@@ -267,10 +320,9 @@ class SubscriptionController extends AbstractController
                     ]],
                     'proration_behavior' => 'none',
                 ]);
+                $sub->setPendingPlan($targetPlan)
+                    ->setCancelAtPeriodEnd(false);
             }
-
-            $sub->setPendingPlan($targetPlan)
-                ->setCancelAtPeriodEnd(true);
             $this->subscriptionService->em()->persist($sub);
             $this->subscriptionService->em()->flush();
 

@@ -51,6 +51,7 @@ class Book
     private ?bool $isPublic = false;
 
     #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'book', orphanRemoval: true)]
+    #[ORM\OrderBy(['pageNumber' => 'ASC'])]
     private Collection $pages;
 
     #[ORM\OneToMany(targetEntity: Job::class, mappedBy: 'book', orphanRemoval: true)]

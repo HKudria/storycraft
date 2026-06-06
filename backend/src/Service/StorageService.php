@@ -59,6 +59,16 @@ class StorageService
         return (string) $this->publicClient->createPresignedRequest($cmd, "+{$ttlSeconds} seconds")->getUri();
     }
 
+    public function get(string $key): string
+    {
+        $result = $this->client->getObject([
+            'Bucket' => $this->bucket,
+            'Key' => $key,
+        ]);
+
+        return $result['Body']->getContents();
+    }
+
     public function delete(string $key): void
     {
         $this->client->deleteObject([

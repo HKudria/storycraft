@@ -235,7 +235,7 @@
 
 ### 4.1 Backend — Storage service
 - [x] `StorageService` — dual S3Client (internal `minio:9000` for uploads, `localhost:9000` for presigned URLs)
-  - `upload()`, `getPresignedUrl()`, `delete()`
+  - `upload()`, `get()`, `getPresignedUrl()`, `delete()`
   - Wired via env vars: `S3_ENDPOINT`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `S3_REGION`, `S3_PUBLIC_URL`
 
 ### 4.2 Backend — Illustration generation
@@ -252,11 +252,15 @@
 
 ### 4.3 Backend — PDF generation
 - [x] `GeneratePdfHandler`:
-  1. Load Book + Pages with presigned image URLs
-  2. Render Twig HTML template (cover + pages with images + text)
-  3. Generate PDF via mPDF (A4 landscape)
-  4. Upload to MinIO, save `Book.pdfS3Key`
-- [x] Twig template: `templates/pdf/book.html.twig`
+  1. Load Book + Pages, download images to temp files via `StorageService::get()`
+  2. Apply vignette fog fade to image edges using GD (smoothstep elliptical blend toward white)
+  3. Render Twig HTML template (cover + two-column pages with images + text)
+  4. Generate PDF via mPDF (A4 landscape)
+  5. Upload to MinIO, save `Book.pdfS3Key`
+  6. Cleanup temp files in `finally` block
+- [x] Twig template: `templates/pdf/book.html.twig` — two-column layout, chapter labels, styled cover page, page numbers
+- [x] `RetryPdfCommand` — CLI tool (`app:retry-pdf`) to re-dispatch PDF generation for a book
+- [x] `Book` entity — pages ordered by `pageNumber` via `#[ORM\OrderBy]`
 
 ### 4.4 Backend — API updates
 - [x] `BookController` updated — presigned image URLs in page data, `GET /api/books/{id}/download` for PDF
@@ -295,27 +299,32 @@
 - [x] `NewBookPage` step 4 — upgrade prompt when book limit reached
 - [x] `useAuth` User type — includes `booksUsed`, `booksLimit`, `canCreate`
 
-### 5.1 Backend — Stripe integration
-- [ ] Create products and prices in Stripe Dashboard: Free, Basic ($9.99/mo), Pro ($19.99/mo)
-- [ ] `SubscriptionController`:
-  - `POST /api/subscriptions/checkout` — create Stripe Checkout Session, return `{ url }`
-  - `POST /api/subscriptions/portal` — create Stripe Customer Portal session, return `{ url }`
-  - `GET /api/subscriptions/current` — return current plan, status, usage
-  - `POST /api/subscriptions/webhook` — Stripe webhook handler (verify signature)
-- [ ] Webhook event handlers in `StripeWebhookService`:
+### 5.3 Backend — Stripe integration
+- [x] Create products and prices in Stripe Dashboard: Free, Basic ($9.99/mo), Pro ($19.99/mo)
+- [x] `SubscriptionController`:
+  - `POST /api/subscription/checkout` — create Stripe Checkout Session, return `{ url }`
+  - `POST /api/subscription/portal` — create Stripe Customer Portal session, return `{ url }`
+  - `GET /api/subscription` — return current plan, status, usage
+  - `POST /api/webhooks/stripe` — Stripe webhook handler (verify signature)
+  - `POST /api/subscription/revert` — cancel pending plan change (restore original price or remove cancel_at_period_end)
+- [x] Webhook event handlers in `SubscriptionController`:
   - `checkout.session.completed` → activate subscription, set plan + limits
   - `invoice.payment_succeeded` → renew period, reset `booksUsedThisMonth`
   - `customer.subscription.updated` → sync plan changes
   - `customer.subscription.deleted` → downgrade to free
-- [ ] `SubscriptionService::canCreateBook(User $user): bool` — checks plan limits
+- [x] `SubscriptionService` — plan change scheduling with pending plan, cancel_at_period_end handling
+- [x] Fix: `GenerateStoryHandler` — usage increment only on new books, not retries (checks `wasRetry` flag)
 
-### 5.2 Frontend — Billing pages
-- [ ] `/pricing` page — plan comparison table (Free / Basic / Pro)
-- [ ] "Upgrade" button → `POST /api/subscriptions/checkout` → redirect to Stripe Checkout
-- [ ] `/dashboard/billing` page — current plan, books used/remaining this month, "Manage subscription" button (→ Stripe Portal)
-- [ ] `useSubscription()` hook — `{ plan, booksUsed, booksLimit, canCreate }`
-- [ ] Wizard step 4 — show upgrade prompt if `!canCreate` instead of confirm button
-- [ ] Success/cancel return URL pages: `/billing/success`, `/billing/cancelled`
+### 5.4 Frontend — Billing UX
+- [x] `/pricing` — public plan comparison page (Free/Basic/Pro table)
+- [x] "Upgrade" button → `POST /api/subscription/checkout` → redirect to Stripe Checkout
+- [x] `/dashboard/billing` — current plan badge, usage meter, upgrade/downgrade buttons, pending change banner with revert option
+- [x] `useSubscription()` hook — `{ plan, booksUsed, booksLimit, canCreate }`
+- [x] `useRevertChange()` mutation — `POST /api/subscription/revert`
+- [x] Pending change banners — separate banners for cancellation (→ free) and downgrade, each with "Keep current plan" revert button
+- [x] Dashboard — book title shown separately from topic, usage meter in header
+- [x] `useAuth` User type — includes `booksUsed`, `booksLimit`, `canCreate`
+- [x] `client.ts` — robust 401 handling: refresh loop prevention, force logout on refresh failure
 
 ---
 

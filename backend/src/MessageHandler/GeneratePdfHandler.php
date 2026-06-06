@@ -13,6 +13,9 @@ use Twig\Environment;
 #[AsMessageHandler]
 class GeneratePdfHandler
 {
+    /** @var string[] Temp files to clean up */
+    private array $tempFiles = [];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly StorageService $storageService,
@@ -38,14 +41,14 @@ class GeneratePdfHandler
         try {
             $pages = [];
             foreach ($book->getPages() as $page) {
-                $imageUrl = null;
+                $imagePath = null;
                 if ($page->getImageS3Key()) {
-                    $imageUrl = $this->storageService->getPresignedUrl($page->getImageS3Key(), 3600);
+                    $imagePath = $this->downloadToTempFile($page->getImageS3Key());
                 }
                 $pages[] = [
                     'pageNumber' => $page->getPageNumber(),
                     'text' => $page->getText(),
-                    'imageUrl' => $imageUrl,
+                    'imagePath' => $imagePath,
                 ];
             }
 
@@ -79,6 +82,75 @@ class GeneratePdfHandler
                 ->setErrorMessage($e->getMessage())
                 ->setFinishedAt(new \DateTimeImmutable());
             $this->em->flush();
+        } finally {
+            $this->cleanupTempFiles();
         }
+    }
+
+    private function downloadToTempFile(string $s3Key): ?string
+    {
+        try {
+            $data = $this->storageService->get($s3Key);
+            $path = sys_get_temp_dir() . '/' . basename($s3Key);
+            $this->applyEdgeFade($data);
+            file_put_contents($path, $data);
+            $this->tempFiles[] = $path;
+            return $path;
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    private function applyEdgeFade(string &$imageData): void
+    {
+        $src = imagecreatefromstring($imageData);
+        if ($src === false) {
+            return;
+        }
+
+        $w = imagesx($src);
+        $h = imagesy($src);
+        $cx = $w / 2;
+        $cy = $h / 2;
+
+        for ($y = 0; $y < $h; $y++) {
+            for ($x = 0; $x < $w; $x++) {
+                $dx = ($x - $cx) / $cx;
+                $dy = ($y - $cy) / $cy;
+                $dist = sqrt($dx * $dx + $dy * $dy);
+
+                if ($dist <= 0.78) {
+                    continue;
+                }
+
+                $strength = min(($dist - 0.78) / 0.22, 1.0);
+                $strength = $strength * $strength * (3 - 2 * $strength);
+
+                $rgb = imagecolorat($src, $x, $y);
+                $r = ($rgb >> 16) & 0xFF;
+                $g = ($rgb >> 8) & 0xFF;
+                $b = $rgb & 0xFF;
+
+                $color = imagecolorallocate($src,
+                    (int) ($r + (255 - $r) * $strength),
+                    (int) ($g + (255 - $g) * $strength),
+                    (int) ($b + (255 - $b) * $strength),
+                );
+                imagesetpixel($src, $x, $y, $color);
+            }
+        }
+
+        ob_start();
+        imagepng($src);
+        $imageData = ob_get_clean();
+        imagedestroy($src);
+    }
+
+    private function cleanupTempFiles(): void
+    {
+        foreach ($this->tempFiles as $path) {
+            @unlink($path);
+        }
+        $this->tempFiles = [];
     }
 }

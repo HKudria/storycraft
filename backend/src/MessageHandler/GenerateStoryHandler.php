@@ -37,6 +37,8 @@ class GenerateStoryHandler
             ['createdAt' => 'DESC'],
         );
 
+        $wasRetry = $book->getStatus() === Book::STATUS_FAILED;
+
         try {
             $book->setStatus(Book::STATUS_PROCESSING);
             if ($job) {
@@ -84,7 +86,9 @@ class GenerateStoryHandler
                     ->setFinishedAt(new \DateTimeImmutable());
             }
 
-            $this->subscriptionService->incrementUsage($book->getUser());
+            if (!$wasRetry) {
+                $this->subscriptionService->incrementUsage($book->getUser());
+            }
             $this->em->flush();
 
             $firstPage = $book->getPages()->first();
