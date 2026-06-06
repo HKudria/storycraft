@@ -12,6 +12,7 @@ use App\Service\SubscriptionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler]
 class GenerateStoryHandler
@@ -21,6 +22,7 @@ class GenerateStoryHandler
         private readonly StoryProviderInterface $storyProvider,
         private readonly SubscriptionService $subscriptionService,
         private readonly MessageBusInterface $bus,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -49,16 +51,19 @@ class GenerateStoryHandler
 
             $child = $book->getChild();
             $template = $book->getTemplate();
+            $locale = $book->getUser()->getLocale();
 
             $petLine = $child->getPetName()
-                ? "They have a pet named {$child->getPetName()}."
+                ? $this->translator->trans('story.pet_line', ['{petName}' => $child->getPetName()], 'messages', $locale)
                 : '';
+
+            $notSpecified = $this->translator->trans('story.not_specified', [], 'messages', $locale);
 
             $prompt = strtr($template->getPromptBlueprint(), [
                 '{childName}' => $child->getName(),
                 '{age}' => (string) $child->getAge(),
-                '{appearance}' => $child->getAppearance() ?? 'not specified',
-                '{interests}' => $child->getInterests() ?? 'not specified',
+                '{appearance}' => $child->getAppearance() ?? $notSpecified,
+                '{interests}' => $child->getInterests() ?? $notSpecified,
                 '{petLine}' => $petLine,
                 '{topic}' => $book->getTopic(),
                 '{language}' => $book->getLanguage(),

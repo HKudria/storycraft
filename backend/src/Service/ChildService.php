@@ -8,12 +8,14 @@ use App\Entity\User;
 use App\Repository\ChildRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ChildService
 {
     public function __construct(
         private readonly ChildRepository $childRepository,
         private readonly EntityManagerInterface $em,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -30,7 +32,7 @@ class ChildService
         $child = $this->childRepository->find($id);
 
         if (!$child || $child->getUser()->getId() !== $user->getId() || $child->getDeletedAt() !== null) {
-            throw new NotFoundHttpException('Child not found');
+            throw new NotFoundHttpException($this->translator->trans('error.child_not_found'));
         }
 
         return $child;

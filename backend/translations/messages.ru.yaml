@@ -1,0 +1,23 @@
+# Сообщения об ошибках
+error.book_limit_reached: 'Лимит книг на этот месяц исчерпан.'
+error.child_not_found: 'Ребёнок не найден.'
+error.template_not_found: 'Шаблон не найден.'
+error.book_not_found: 'Книга не найдена.'
+error.pdf_not_ready: 'PDF ещё не готов.'
+error.invalid_plan: 'Недействительный план.'
+error.already_on_plan: 'Вы уже на этом плане.'
+error.no_pending_change: 'Нет ожидающих изменений для отмены.'
+error.no_subscription: 'Подписка не найдена.'
+error.invalid_payload: 'Неверные данные.'
+error.sync_failed: 'Ошибка синхронизации.'
+error.not_available: 'Недоступно.'
+error.no_refresh_token: 'Нет токена обновления.'
+error.invalid_refresh_token: 'Недействительный или просроченный токен обновления.'
+
+# Генерация истории
+story.pet_line: 'У них есть питомец по имени {petName}.'
+story.not_specified: 'не указано'
+
+# Метки PDF
+pdf.chapter: 'Глава'
+pdf.story_for: 'Сказка для {childName}'

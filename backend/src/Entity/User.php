@@ -38,6 +38,9 @@ class User implements UserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
+    #[ORM\Column(length: 5, options: ['default' => 'en'])]
+    private string $locale = 'en';
+
     #[ORM\OneToMany(targetEntity: Child::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $children;
 
@@ -113,6 +116,9 @@ class User implements UserInterface
 
     /** @return Collection<int, Referral> */
     public function getReferralsReceived(): Collection { return $this->referralsReceived; }
+
+    public function getLocale(): string { return $this->locale; }
+    public function setLocale(string $locale): static { $this->locale = $locale; return $this; }
 
     public function getUserIdentifier(): string { return $this->email; }
     public function getRoles(): array { return $this->roles; }

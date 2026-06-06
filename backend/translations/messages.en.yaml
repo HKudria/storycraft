@@ -1,0 +1,23 @@
+# Error messages
+error.book_limit_reached: 'Book limit reached for this month.'
+error.child_not_found: 'Child not found.'
+error.template_not_found: 'Template not found.'
+error.book_not_found: 'Book not found.'
+error.pdf_not_ready: 'PDF not ready yet.'
+error.invalid_plan: 'Invalid plan.'
+error.already_on_plan: 'Already on this plan.'
+error.no_pending_change: 'No pending change to revert.'
+error.no_subscription: 'No subscription found.'
+error.invalid_payload: 'Invalid payload.'
+error.sync_failed: 'Sync failed.'
+error.not_available: 'Not available.'
+error.no_refresh_token: 'No refresh token.'
+error.invalid_refresh_token: 'Invalid or expired refresh token.'
+
+# Story generation
+story.pet_line: 'They have a pet named {petName}.'
+story.not_specified: 'not specified'
+
+# PDF labels
+pdf.chapter: 'Chapter'
+pdf.story_for: 'A story for {childName}'

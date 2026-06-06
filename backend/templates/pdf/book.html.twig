@@ -70,7 +70,7 @@
 <div class="cover">
     <div class="cover-bar"></div>
     <h1>{{ title }}</h1>
-    <div class="subtitle">A story for {{ childName }}</div>
+    <div class="subtitle">{{ storyForLabel }}</div>
     <div class="meta">{{ templateTitle }}</div>
     <div class="meta">{{ createdAt }}</div>
 </div>
@@ -79,7 +79,7 @@
 <div class="page">
     {% if loop.index is odd %}
     <div class="page-half-left">
-        <div class="chapter-label">Chapter {{ page.pageNumber }}</div>
+        <div class="chapter-label">{{ chapterLabel }} {{ page.pageNumber }}</div>
         <div class="story-text">{{ page.text|nl2br }}</div>
     </div>
     {% if page.imagePath %}
@@ -94,7 +94,7 @@
     </div>
     {% endif %}
     <div class="page-half-right">
-        <div class="chapter-label">Chapter {{ page.pageNumber }}</div>
+        <div class="chapter-label">{{ chapterLabel }} {{ page.pageNumber }}</div>
         <div class="story-text">{{ page.text|nl2br }}</div>
     </div>
     {% endif %}

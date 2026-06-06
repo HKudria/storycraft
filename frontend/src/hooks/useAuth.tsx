@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
+import i18n from '../i18n'
 
 interface User {
   id: number
@@ -14,6 +15,7 @@ interface User {
   currentPeriodEnd: string | null
   pendingPlan: string | null
   cancelAtPeriodEnd: boolean
+  locale: string
 }
 
 interface AuthContextType {
@@ -64,6 +66,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setManualToken(token)
     queryClient.invalidateQueries({ queryKey: ['me'] })
   }, [queryClient])
+
+  useEffect(() => {
+    if (user?.locale) {
+      i18n.changeLanguage(user.locale)
+    }
+  }, [user?.locale])
 
   return (
     <AuthContext.Provider value={{

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AuthProvider, useAuth } from './hooks/useAuth.tsx'
 import { AuthGuard } from './components/AuthGuard'
 import { LoginPage } from './pages/LoginPage'
@@ -48,6 +49,7 @@ function BillingSuccessPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { loginWithToken } = useAuth()
+  const { t } = useTranslation()
 
   useEffect(() => {
     (async () => {
@@ -61,8 +63,8 @@ function BillingSuccessPage() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-gray-900">Updating plan…</h2>
-        <p className="text-gray-500 mt-2">You'll be redirected shortly.</p>
+        <h2 className="text-xl font-bold text-gray-900">{t('app.updatingPlan')}</h2>
+        <p className="text-gray-500 mt-2">{t('app.redirectMessage')}</p>
       </div>
     </div>
   )

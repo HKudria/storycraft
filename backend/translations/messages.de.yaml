@@ -1,0 +1,23 @@
+# Fehlermeldungen
+error.book_limit_reached: 'Buchlimit für diesen Monat erreicht.'
+error.child_not_found: 'Kind nicht gefunden.'
+error.template_not_found: 'Vorlage nicht gefunden.'
+error.book_not_found: 'Buch nicht gefunden.'
+error.pdf_not_ready: 'PDF ist noch nicht bereit.'
+error.invalid_plan: 'Ungültiger Plan.'
+error.already_on_plan: 'Sie haben bereits diesen Plan.'
+error.no_pending_change: 'Keine ausstehende Änderung zum Rückgängigmachen.'
+error.no_subscription: 'Kein Abonnement gefunden.'
+error.invalid_payload: 'Ungültige Daten.'
+error.sync_failed: 'Synchronisierung fehlgeschlagen.'
+error.not_available: 'Nicht verfügbar.'
+error.no_refresh_token: 'Kein Aktualisierungstoken.'
+error.invalid_refresh_token: 'Ungültiges oder abgelaufenes Aktualisierungstoken.'
+
+# Geschichte generieren
+story.pet_line: 'Sie haben ein Haustier namens {petName}.'
+story.not_specified: 'nicht angegeben'
+
+# PDF-Beschriftungen
+pdf.chapter: 'Kapitel'
+pdf.story_for: 'Eine Geschichte für {childName}'

@@ -8,6 +8,7 @@ use App\Message\GeneratePdfMessage;
 use App\Service\StorageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[AsMessageHandler]
@@ -20,6 +21,7 @@ class GeneratePdfHandler
         private readonly EntityManagerInterface $em,
         private readonly StorageService $storageService,
         private readonly Environment $twig,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -52,11 +54,18 @@ class GeneratePdfHandler
                 ];
             }
 
+            $locale = $book->getUser()->getLocale();
+            $childName = $book->getChild()?->getName() ?? '';
+
+            $formatter = new \IntlDateFormatter($locale, \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+
             $html = $this->twig->render('pdf/book.html.twig', [
                 'title' => $book->getTitle() ?? $book->getTopic(),
-                'childName' => $book->getChild()?->getName(),
+                'childName' => $childName,
                 'templateTitle' => $book->getTemplate()?->getTitle(),
-                'createdAt' => $book->getCreatedAt()->format('F j, Y'),
+                'createdAt' => $formatter->format($book->getCreatedAt()),
+                'storyForLabel' => $this->translator->trans('pdf.story_for', ['{childName}' => $childName], 'messages', $locale),
+                'chapterLabel' => $this->translator->trans('pdf.chapter', [], 'messages', $locale),
                 'pages' => $pages,
             ]);
 

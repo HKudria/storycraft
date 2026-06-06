@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthController extends AbstractController
 {
@@ -19,6 +20,7 @@ class AuthController extends AbstractController
         private readonly AuthService $authService,
         private readonly EntityManagerInterface $em,
         private readonly SubscriptionService $subscriptionService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -55,7 +57,7 @@ class AuthController extends AbstractController
     public function devLogin(): JsonResponse
     {
         if ($this->getParameter('kernel.environment') !== 'dev') {
-            return new JsonResponse(['error' => 'Not available'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => $this->translator->trans('error.not_available')], Response::HTTP_NOT_FOUND);
         }
 
         $user = $this->authService->findOrCreateUser(
@@ -79,13 +81,13 @@ class AuthController extends AbstractController
         $refreshToken = $request->cookies->get('refreshToken');
 
         if (!$refreshToken) {
-            return new JsonResponse(['error' => 'No refresh token'], Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['error' => $this->translator->trans('error.no_refresh_token')], Response::HTTP_UNAUTHORIZED);
         }
 
         $accessToken = $this->authService->refreshAccessToken($refreshToken);
 
         if (!$accessToken) {
-            $response = new JsonResponse(['error' => 'Invalid or expired refresh token'], Response::HTTP_UNAUTHORIZED);
+            $response = new JsonResponse(['error' => $this->translator->trans('error.invalid_refresh_token')], Response::HTTP_UNAUTHORIZED);
             $response->headers->clearCookie('refreshToken');
             return $response;
         }
@@ -126,7 +128,25 @@ class AuthController extends AbstractController
             'currentPeriodEnd' => $sub['currentPeriodEnd'],
             'pendingPlan' => $sub['pendingPlan'],
             'cancelAtPeriodEnd' => $sub['cancelAtPeriodEnd'],
+            'locale' => $user->getLocale(),
         ]);
+    }
+
+    #[Route('/api/auth/profile', name: 'auth_profile', methods: ['PUT'])]
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $locale = $data['locale'] ?? null;
+
+        if (!in_array($locale, ['en', 'pl', 'ua', 'ru', 'de'], true)) {
+            return new JsonResponse(['error' => 'Invalid locale.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = $this->getUser();
+        $user->setLocale($locale);
+        $this->em->flush();
+
+        return new JsonResponse(['locale' => $locale]);
     }
 
     private function createRefreshTokenCookie(string $refreshToken): Cookie

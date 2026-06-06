@@ -17,7 +17,7 @@ class BookRequest
         #[Assert\Length(max: 500)]
         public readonly string $topic,
 
-        #[Assert\Choice(choices: ['en', 'pl', 'de', 'fr'])]
+        #[Assert\Choice(choices: ['en', 'pl', 'ua', 'ru', 'de', 'fr'])]
         public readonly string $language = 'en',
     ) {
     }

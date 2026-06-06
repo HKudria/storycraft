@@ -1,0 +1,23 @@
+# Повідомлення про помилки
+error.book_limit_reached: 'Ліміт книг на цей місяць вичерпано.'
+error.child_not_found: 'Дитину не знайдено.'
+error.template_not_found: 'Шаблон не знайдено.'
+error.book_not_found: 'Книгу не знайдено.'
+error.pdf_not_ready: 'PDF ще не готовий.'
+error.invalid_plan: 'Невірний план.'
+error.already_on_plan: 'Ви вже на цьому плані.'
+error.no_pending_change: 'Немає очікуваних змін для скасування.'
+error.no_subscription: 'Підписку не знайдено.'
+error.invalid_payload: 'Невірні дані.'
+error.sync_failed: 'Помилка синхронізації.'
+error.not_available: 'Недоступно.'
+error.no_refresh_token: 'Немає токена оновлення.'
+error.invalid_refresh_token: 'Невірний або прострочений токен оновлення.'
+
+# Генерація історії
+story.pet_line: 'У них є домашня тварина на ім\'я {petName}.'
+story.not_specified: 'не вказано'
+
+# Мітки PDF
+pdf.chapter: 'Розділ'
+pdf.story_for: 'Казка для {childName}'

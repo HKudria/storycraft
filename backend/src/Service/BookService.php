@@ -9,6 +9,7 @@ use App\Message\GenerateStoryMessage;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BookService
 {
@@ -17,23 +18,24 @@ class BookService
         private readonly BookRepository $bookRepo,
         private readonly SubscriptionService $subscriptionService,
         private readonly MessageBusInterface $bus,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
     public function create(\App\Entity\User $user, BookRequest $dto): Book
     {
         if (!$this->subscriptionService->canCreateBook($user)) {
-            throw new \RuntimeException('Book limit reached for this month.', 403);
+            throw new \RuntimeException($this->translator->trans('error.book_limit_reached'), 403);
         }
 
         $child = $this->em->getRepository(\App\Entity\Child::class)->find($dto->childId);
         if ($child === null || $child->getUser()->getId() !== $user->getId()) {
-            throw new \RuntimeException('Child not found.', 404);
+            throw new \RuntimeException($this->translator->trans('error.child_not_found'), 404);
         }
 
         $template = $this->em->getRepository(\App\Entity\Template::class)->find($dto->templateId);
         if ($template === null) {
-            throw new \RuntimeException('Template not found.', 404);
+            throw new \RuntimeException($this->translator->trans('error.template_not_found'), 404);
         }
 
         $book = new Book();
@@ -61,7 +63,7 @@ class BookService
         $book = $this->bookRepo->findWithPages($id);
 
         if ($book === null || $book->getUser()->getId() !== $user->getId()) {
-            throw new \RuntimeException('Book not found.', 404);
+            throw new \RuntimeException($this->translator->trans('error.book_not_found'), 404);
         }
 
         return $book;

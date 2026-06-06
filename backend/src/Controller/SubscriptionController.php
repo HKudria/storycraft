@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubscriptionController extends AbstractController
 {
@@ -20,6 +21,7 @@ class SubscriptionController extends AbstractController
 
     public function __construct(
         private readonly SubscriptionService $subscriptionService,
+        private readonly TranslatorInterface $translator,
         private readonly string $frontendUrl,
         string $stripeSecretKey,
         private readonly string $basicPriceId,
@@ -72,7 +74,7 @@ class SubscriptionController extends AbstractController
                     return new JsonResponse($this->subscriptionService->getSubscriptionInfo($user));
                 }
             } catch (\Throwable $e) {
-                return new JsonResponse(['error' => 'Sync failed: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return new JsonResponse(['error' => $this->translator->trans('error.sync_failed') . ': ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -103,7 +105,7 @@ class SubscriptionController extends AbstractController
         $plan = $data['plan'] ?? 'basic';
 
         if (!in_array($plan, ['basic', 'pro'], true)) {
-            return new JsonResponse(['error' => 'Invalid plan.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $this->translator->trans('error.invalid_plan')], Response::HTTP_BAD_REQUEST);
         }
 
         $user = $this->getUser();
@@ -169,7 +171,7 @@ class SubscriptionController extends AbstractController
         $targetPlan = $data['plan'] ?? null;
 
         if (!in_array($targetPlan, ['free', 'basic', 'pro'], true)) {
-            return new JsonResponse(['error' => 'Invalid plan.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $this->translator->trans('error.invalid_plan')], Response::HTTP_BAD_REQUEST);
         }
 
         $user = $this->getUser();
@@ -177,7 +179,7 @@ class SubscriptionController extends AbstractController
         $currentPlan = $sub?->getPlan() ?? 'free';
 
         if ($currentPlan === $targetPlan) {
-            return new JsonResponse(['error' => 'Already on this plan.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $this->translator->trans('error.already_on_plan')], Response::HTTP_BAD_REQUEST);
         }
 
         Stripe::setApiKey($this->stripeKey);
@@ -247,7 +249,7 @@ class SubscriptionController extends AbstractController
         $sub = $user->getSubscription();
 
         if (!$sub || !$sub->getPendingPlan()) {
-            return new JsonResponse(['error' => 'No pending change to revert.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $this->translator->trans('error.no_pending_change')], Response::HTTP_BAD_REQUEST);
         }
 
         Stripe::setApiKey($this->stripeKey);
@@ -292,7 +294,7 @@ class SubscriptionController extends AbstractController
     private function scheduleChange(?Subscription $sub, string $targetPlan): JsonResponse
     {
         if (!$sub) {
-            return new JsonResponse(['error' => 'No subscription found.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $this->translator->trans('error.no_subscription')], Response::HTTP_BAD_REQUEST);
         }
 
         // No Stripe subscription — apply locally immediately (dev mode)
@@ -341,7 +343,7 @@ class SubscriptionController extends AbstractController
         $event = json_decode($payload, true);
 
         if (!$event) {
-            return new JsonResponse(['error' => 'Invalid payload'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $this->translator->trans('error.invalid_payload')], Response::HTTP_BAD_REQUEST);
         }
 
         $type = $event['type'] ?? '';

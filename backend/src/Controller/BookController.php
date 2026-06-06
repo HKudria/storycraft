@@ -11,12 +11,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BookController extends AbstractController
 {
     public function __construct(
         private readonly BookService $bookService,
         private readonly StorageService $storageService,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -68,7 +70,7 @@ class BookController extends AbstractController
         }
 
         if ($book->getPdfS3Key() === null) {
-            return new JsonResponse(['error' => 'PDF not ready yet.'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => $this->translator->trans('error.pdf_not_ready')], Response::HTTP_NOT_FOUND);
         }
 
         $url = $this->storageService->getPresignedUrl($book->getPdfS3Key(), 3600);

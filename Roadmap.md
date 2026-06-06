@@ -9,10 +9,11 @@
 | 2 | Children & Templates | Child CRUD, template catalog, story wizard UI | **Done** |
 | 3 | Story Text Generation | Claude API, Symfony Messenger queue, book status | **Done** |
 | 4 | Illustrations & PDF | Cloudflare AI (Flux), mPDF assembly, MinIO/S3 storage | **Done** |
-| 5 | Subscriptions & Billing | Plans, limits, billing UI (Stripe deferred) | **Done** |
-| 6 | Referral Program | Referral codes, bonus logic | |
-| 7 | Ratings & Public Catalog | Book ratings, public catalog page | |
-| 8 | Production | CI/CD, monitoring, security hardening, deploy | |
+| 5 | Subscriptions & Billing | Plans, limits, billing UI, Stripe integration | **Done** |
+| 6 | Multilingual i18n | UI translations (en/pl/ua/ru/de), backend translations, PDF localisation | **Done** |
+| 7 | Referral Program | Referral codes, bonus logic | |
+| 8 | Ratings & Public Catalog | Book ratings, public catalog page | |
+| 9 | Production | CI/CD, monitoring, security hardening, deploy | |
 
 ---
 
@@ -328,9 +329,49 @@
 
 ---
 
-## Phase 6 — Referral Program
+## Phase 6 — Multilingual i18n
 
-### 6.1 Backend
+### 6.1 Backend — Locale infrastructure
+- [x] `User` entity — added `locale` column (varchar 5, default 'en')
+- [x] `AuthController` — locale included in `/api/auth/me` response
+- [x] `PUT /api/auth/profile` — update user locale preference
+- [x] `LocaleSubscriber` — reads `Accept-Language` header, sets request locale
+- [x] `symfony/translation` installed, translator configured in `framework.yaml`
+- [x] Translation files created: `messages.{en,pl,uk,ru,de}.yaml`
+
+### 6.2 Backend — Translated strings
+- [x] Controllers: all error messages use `$translator->trans()` (SubscriptionController, BookController, AuthController, TemplateController)
+- [x] Services: BookService, ChildService error messages translated
+- [x] Handlers: GenerateStoryHandler — pet line and "not specified" translated per user locale
+- [x] GeneratePdfHandler — PDF labels ("Chapter", "A story for") translated, locale-aware date via `IntlDateFormatter`
+
+### 6.3 Backend — PDF localisation
+- [x] Twig template uses passed translation variables for chapter labels and subtitle
+- [x] Date formatting uses `IntlDateFormatter` per user locale
+
+### 6.4 Frontend — i18n infrastructure
+- [x] Installed `i18next`, `react-i18next`, `i18next-browser-languagedetector`
+- [x] Created `frontend/src/i18n/` with translation JSON files for en, pl, uk, ru, de
+- [x] i18n initialized in `main.tsx` with browser language detection
+- [x] `Accept-Language` header added to all API requests via axios interceptor
+- [x] `useAuth` hook syncs locale from user profile — calls `i18n.changeLanguage()` on load
+
+### 6.5 Frontend — Translated components
+- [x] All 8 pages translated: LoginPage, DashboardPage, ChildrenPage, TemplatesPage, NewBookPage, BookDetailPage, PricingPage, BillingPage
+- [x] All 3 components translated: ChildCard, ChildModal, TemplateCard
+- [x] App.tsx BillingSuccessPage strings translated
+- [x] `LanguageSwitcher` component — dropdown with native language names, persists to profile
+- [x] LanguageSwitcher in Dashboard header and Login page
+
+### 6.6 Story language expansion
+- [x] `BookRequest` language choices expanded: en, pl, ua, ru, de, fr
+- [x] NewBookPage wizard includes all 6 language options
+
+---
+
+## Phase 7 — Referral Program
+
+### 7.1 Backend
 - [ ] Generate unique `referralCode` on `User` creation (e.g. `nanoid`, 8 chars)
 - [ ] `ReferralController`:
   - `GET /api/referrals/me` — return `{ code, referralUrl, referrals: [...] }`
@@ -349,23 +390,23 @@
 
 ---
 
-## Phase 7 — Ratings & Public Catalog
+## Phase 8 — Ratings & Public Catalog
 
-### 7.1 Backend — Ratings
+### 8.1 Backend — Ratings
 - [ ] `RatingController`:
   - `POST /api/books/:id/ratings` — submit rating (score 1–5, optional comment); one per user per book
   - `GET /api/books/:id/ratings` — list ratings for a book
 - [ ] Aggregate average rating on `Book` entity (computed on save)
 - [ ] `TemplateService::getAverageRating(Template $template): float` — based on all books using that template
 
-### 7.2 Backend — Public catalog
+### 8.2 Backend — Public catalog
 - [ ] `CatalogController`:
   - `GET /api/catalog` — public books (`Book.isPublic = true`), paginated
   - Filters: `?templateId=`, `?language=`, `?minRating=`
   - Returns book title, template, language, rating, cover image (first page illustration)
 - [ ] `PATCH /api/books/:id/visibility` — toggle `isPublic` (owner only)
 
-### 7.3 Frontend
+### 8.3 Frontend
 - [ ] `/catalog` page — public book gallery with filter sidebar
 - [ ] `BookCard` — cover image, title, rating stars, template name
 - [ ] `StarRating` component — interactive rating input shown after book is done
@@ -373,20 +414,20 @@
 
 ---
 
-## Phase 8 — Production & DevOps
+## Phase 9 — Production & DevOps
 
-### 8.1 Production Dockerfiles
+### 9.1 Production Dockerfiles
 - [ ] `backend/Dockerfile` — multi-stage: `composer install --no-dev`, `php-fpm` with OPcache enabled, no dev dependencies
 - [ ] `frontend/Dockerfile` — multi-stage: `npm run build` → `nginx:alpine` serving `/dist`
 - [ ] `docker-compose.prod.yml` — no volume mounts, uses built images, proper restart policies
 
-### 8.2 CI/CD (GitHub Actions)
+### 9.2 CI/CD (GitHub Actions)
 - [ ] `.github/workflows/ci.yml`:
   - `php-lint` → `phpstan` (static analysis) → `phpunit` (unit tests)
   - `eslint` → `tsc --noEmit` → `vitest` (frontend tests)
 - [ ] `.github/workflows/deploy.yml` — on push to `main`: build images → push to registry → SSH deploy
 
-### 8.3 Security hardening
+### 9.3 Security hardening
 - [ ] Rate limiting via `symfony/rate-limiter`:
   - `POST /api/books` — max 10/hour per user
   - `POST /api/auth/*` — max 20/hour per IP
@@ -396,7 +437,7 @@
 - [ ] All S3 bucket objects private; access only via presigned URLs
 - [ ] `helmet` equivalent headers via Nginx config
 
-### 8.4 Monitoring & observability
+### 9.4 Monitoring & observability
 - [ ] Structured JSON logging via Symfony Monolog
 - [ ] `GET /api/health` — checks DB connection, Redis ping, S3 access
 - [ ] Sentry integration: `sentry/sentry-symfony` + `@sentry/react`
@@ -414,9 +455,10 @@ Phase 0 (infrastructure)
                     └── Phase 3 (story generation)
                             └── Phase 4 (illustrations + PDF)
                                     ├── Phase 5 (billing)     ← can start in parallel with Phase 3
-                                    ├── Phase 6 (referrals)   ← after Phase 5
-                                    ├── Phase 7 (ratings)     ← after Phase 4
-                                    └── Phase 8 (production)  ← last
+                                    ├── Phase 6 (i18n)        ← after Phase 5
+                                    ├── Phase 7 (referrals)   ← after Phase 5
+                                    ├── Phase 8 (ratings)     ← after Phase 4
+                                    └── Phase 9 (production)  ← last
 ```
 
 ---
@@ -431,10 +473,11 @@ Phase 0 (infrastructure)
 | 3 — Story generation | High | 3–4 days |
 | 4 — Illustrations & PDF | High | 3–4 days |
 | 5 — Billing | Medium | 2–3 days |
-| 6 — Referrals | Low | 1 day |
-| 7 — Ratings | Low | 1 day |
-| 8 — Production | Medium | 2–3 days |
-| **Total** | | **~15–20 working days** |
+| 6 — Multilingual i18n | Medium | 2–3 days |
+| 7 — Referrals | Low | 1 day |
+| 8 — Ratings | Low | 1 day |
+| 9 — Production | Medium | 2–3 days |
+| **Total** | | **~17–23 working days** |
 
 ---
 

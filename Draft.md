@@ -32,6 +32,7 @@ The target audience is parents who want to give their child a unique, meaningful
 
 ### Frontend — React 18 + TypeScript
 - **React 19** + **TypeScript** — component-based UI with full type safety
+- **i18next** + **react-i18next** — internationalization, 5 languages (en, pl, uk, ru, de)
 - **Vite** — fast dev server and production bundler
 - **TailwindCSS** — utility-first styling
 - **React Query (TanStack Query)** — server state management, polling for job status
@@ -50,6 +51,7 @@ The target audience is parents who want to give their child a unique, meaningful
 - **Nginx** — reverse proxy: `/api/*` → PHP-FPM, `/` → React dev/build
 - **Docker + Docker Compose** — entire local environment in one `docker-compose.yml`
 - **Stripe** — subscription billing, Checkout Sessions, Customer Portal, webhooks
+- **Symfony Translation** — server-side string translation, locale-aware PDF generation
 
 ---
 
@@ -265,7 +267,8 @@ storycraft/
 | POST | `/api/auth/dev-login` | No | Dev-only: creates/finds mock user, issues JWT (dev env only) |
 | POST | `/api/auth/refresh` | Cookie | Refresh access token using httpOnly refresh cookie |
 | POST | `/api/auth/logout` | JWT | Invalidate refresh token, clear cookie |
-| GET | `/api/auth/me` | JWT | Return current user profile (id, email, name, avatarUrl, plan) |
+| GET | `/api/auth/me` | JWT | Return current user profile (id, email, name, avatarUrl, plan, locale) |
+| PUT | `/api/auth/profile` | JWT | Update user profile (locale) |
 
 ### Children
 

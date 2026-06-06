@@ -9,11 +9,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TemplateController extends AbstractController
 {
     public function __construct(
         private readonly TemplateRepository $templateRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -38,7 +40,7 @@ class TemplateController extends AbstractController
         $template = $this->templateRepository->find($id);
 
         if (!$template || !$template->isActive()) {
-            throw new NotFoundHttpException('Template not found');
+            throw new NotFoundHttpException($this->translator->trans('error.template_not_found'));
         }
 
         return new JsonResponse($this->serializeTemplate($template));

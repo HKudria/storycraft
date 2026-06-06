@@ -1,0 +1,23 @@
+# Komunikaty o błędach
+error.book_limit_reached: 'Osiągnięto limit książek na ten miesiąc.'
+error.child_not_found: 'Dziecko nie zostało znalezione.'
+error.template_not_found: 'Szablon nie został znaleziony.'
+error.book_not_found: 'Książka nie została znaleziona.'
+error.pdf_not_ready: 'PDF nie jest jeszcze gotowy.'
+error.invalid_plan: 'Nieprawidłowy plan.'
+error.already_on_plan: 'Jesteś już na tym planie.'
+error.no_pending_change: 'Brak oczekującej zmiany do cofnięcia.'
+error.no_subscription: 'Nie znaleziono subskrypcji.'
+error.invalid_payload: 'Nieprawidłowe dane.'
+error.sync_failed: 'Synchronizacja nie powiodła się.'
+error.not_available: 'Niedostępne.'
+error.no_refresh_token: 'Brak tokenu odświeżania.'
+error.invalid_refresh_token: 'Nieprawidłowy lub wygasły token odświeżania.'
+
+# Generowanie opowieści
+story.pet_line: 'Mają zwierzaka o imieniu {petName}.'
+story.not_specified: 'nie podano'
+
+# Etykiety PDF
+pdf.chapter: 'Rozdział'
+pdf.story_for: 'Opowieść dla {childName}'

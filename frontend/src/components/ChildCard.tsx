@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { ChildData } from '../api/children'
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export function ChildCard({ child, onEdit, onDelete }: Props) {
+  const { t } = useTranslation()
   const initials = child.name.slice(0, 2).toUpperCase()
 
   return (
@@ -17,15 +19,15 @@ export function ChildCard({ child, onEdit, onDelete }: Props) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-gray-900 truncate">{child.name}</p>
-          <p className="text-sm text-gray-500">Age {child.age}{child.gender ? ` · ${child.gender}` : ''}</p>
+          <p className="text-sm text-gray-500">{t('common.age', { num: child.age })}{child.gender ? ` · ${child.gender}` : ''}</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => onEdit(child)} className="text-sm text-gray-500 hover:text-gray-700">Edit</button>
-          <button onClick={() => onDelete(child.id)} className="text-sm text-red-500 hover:text-red-700">Delete</button>
+          <button onClick={() => onEdit(child)} className="text-sm text-gray-500 hover:text-gray-700">{t('common.edit')}</button>
+          <button onClick={() => onDelete(child.id)} className="text-sm text-red-500 hover:text-red-700">{t('common.delete')}</button>
         </div>
       </div>
-      {child.interests && <p className="mt-2 text-sm text-gray-600">Interests: {child.interests}</p>}
-      {child.petName && <p className="text-sm text-gray-600">Pet: {child.petName}</p>}
+      {child.interests && <p className="mt-2 text-sm text-gray-600">{t('childCard.interests')} {child.interests}</p>}
+      {child.petName && <p className="text-sm text-gray-600">{t('childCard.pet')} {child.petName}</p>}
     </div>
   )
 }
