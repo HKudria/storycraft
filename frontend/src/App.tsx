@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useSearchParams, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { AuthProvider, useAuth } from './hooks/useAuth.tsx'
@@ -11,6 +11,7 @@ import { NewBookPage } from './pages/NewBookPage'
 import { BookDetailPage } from './pages/BookDetailPage'
 import { PricingPage } from './pages/PricingPage'
 import { BillingPage } from './pages/BillingPage'
+import { syncSubscription } from './api/subscription'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,20 +46,23 @@ function AuthCallbackPage() {
 
 function BillingSuccessPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { loginWithToken } = useAuth()
 
   useEffect(() => {
-    loginWithToken(localStorage.getItem('accessToken') || '')
-    const timer = setTimeout(() => navigate('/dashboard/billing', { replace: true }), 2000)
-    return () => clearTimeout(timer)
-  }, [navigate, loginWithToken])
+    (async () => {
+      await loginWithToken(localStorage.getItem('accessToken') || '')
+      await syncSubscription(searchParams.get('session_id') ?? undefined)
+      navigate('/dashboard/billing', { replace: true })
+    })()
+  }, [navigate, loginWithToken, searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <div className="text-4xl mb-4">&#10003;</div>
-        <h2 className="text-xl font-bold text-gray-900">Plan updated!</h2>
-        <p className="text-gray-500 mt-2">Redirecting to billing…</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4" />
+        <h2 className="text-xl font-bold text-gray-900">Updating plan…</h2>
+        <p className="text-gray-500 mt-2">You'll be redirected shortly.</p>
       </div>
     </div>
   )

@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class AnthropicService
+class AnthropicStoryProvider implements StoryProviderInterface
 {
     public function __construct(
         private readonly HttpClientInterface $httpClient,

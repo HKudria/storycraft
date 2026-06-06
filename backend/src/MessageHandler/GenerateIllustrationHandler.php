@@ -7,7 +7,7 @@ use App\Entity\Job;
 use App\Entity\Page;
 use App\Message\GenerateIllustrationMessage;
 use App\Message\GeneratePdfMessage;
-use App\Service\ImageService;
+use App\Service\ImageProviderInterface;
 use App\Service\StorageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -18,7 +18,7 @@ class GenerateIllustrationHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly ImageService $imageService,
+        private readonly ImageProviderInterface $imageProvider,
         private readonly StorageService $storageService,
         private readonly MessageBusInterface $bus,
     ) {
@@ -52,7 +52,7 @@ class GenerateIllustrationHandler
                 . ($page->getImagePrompt() ?? $book->getTopic())
                 . " The main character is a child who is {$appearance}.";
 
-            $imageBase64 = $this->imageService->generateImage($prompt);
+            $imageBase64 = $this->imageProvider->generateImage($prompt);
             $imageData = base64_decode($imageBase64);
 
             $s3Key = "books/{$book->getId()}/pages/{$page->getPageNumber()}.png";

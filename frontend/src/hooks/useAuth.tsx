@@ -11,6 +11,9 @@ interface User {
   booksUsed: number
   booksLimit: number
   canCreate: boolean
+  currentPeriodEnd: string | null
+  pendingPlan: string | null
+  cancelAtPeriodEnd: boolean
 }
 
 interface AuthContextType {

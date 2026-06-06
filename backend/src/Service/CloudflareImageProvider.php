@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ImageService
+class CloudflareImageProvider implements ImageProviderInterface
 {
     public function __construct(
         private readonly HttpClientInterface $httpClient,

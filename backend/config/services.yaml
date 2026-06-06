@@ -7,6 +7,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.image_provider: '%env(IMAGE_PROVIDER)%'
 
 services:
     # default configuration for services in *this* file
@@ -19,16 +20,24 @@ services:
     App\:
         resource: '../src/'
 
-    App\Service\AnthropicService:
+    App\Service\AnthropicStoryProvider:
         arguments:
             $baseUrl: '%env(ANTHROPIC_BASE_URL)%'
             $apiKey: '%env(ANTHROPIC_API_KEY)%'
             $model: '%env(ANTHROPIC_MODEL)%'
 
-    App\Service\ImageService:
+    App\Service\GeminiStoryProvider:
+        arguments:
+            $apiKey: '%env(GEMINI_API_KEY)%'
+
+    App\Service\CloudflareImageProvider:
         arguments:
             $accountId: '%env(CF_ACCOUNT_ID)%'
             $apiToken: '%env(CF_API_TOKEN)%'
+
+    App\Service\GeminiImageProvider:
+        arguments:
+            $apiKey: '%env(GEMINI_API_KEY)%'
 
     App\Service\StorageService:
         arguments:
@@ -39,6 +48,14 @@ services:
             $region: '%env(S3_REGION)%'
             $publicUrl: '%env(S3_PUBLIC_URL)%'
 
+    App\Service\SubscriptionService:
+        arguments:
+            $basicPriceId: '%env(STRIPE_BASIC_PRICE_ID)%'
+            $proPriceId: '%env(STRIPE_PRO_PRICE_ID)%'
+
     App\Controller\SubscriptionController:
         arguments:
             $frontendUrl: '%env(APP_FRONTEND_URL)%'
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $basicPriceId: '%env(STRIPE_BASIC_PRICE_ID)%'
+            $proPriceId: '%env(STRIPE_PRO_PRICE_ID)%'

@@ -50,6 +50,12 @@ class Subscription
     #[ORM\Column]
     private ?int $booksLimit = 1;
 
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $pendingPlan = null;
+
+    #[ORM\Column]
+    private bool $cancelAtPeriodEnd = false;
+
     public function getId(): ?int { return $this->id; }
     public function getUser(): ?User { return $this->user; }
     public function setUser(?User $user): static { $this->user = $user; return $this; }
@@ -69,4 +75,8 @@ class Subscription
     public function setBooksUsedThisMonth(int $booksUsedThisMonth): static { $this->booksUsedThisMonth = $booksUsedThisMonth; return $this; }
     public function getBooksLimit(): ?int { return $this->booksLimit; }
     public function setBooksLimit(int $booksLimit): static { $this->booksLimit = $booksLimit; return $this; }
+    public function getPendingPlan(): ?string { return $this->pendingPlan; }
+    public function setPendingPlan(?string $pendingPlan): static { $this->pendingPlan = $pendingPlan; return $this; }
+    public function isCancelAtPeriodEnd(): bool { return $this->cancelAtPeriodEnd; }
+    public function setCancelAtPeriodEnd(bool $cancelAtPeriodEnd): static { $this->cancelAtPeriodEnd = $cancelAtPeriodEnd; return $this; }
 }

@@ -123,6 +123,9 @@ class AuthController extends AbstractController
             'booksUsed' => $sub['booksUsed'],
             'booksLimit' => $sub['booksLimit'],
             'canCreate' => $sub['canCreate'],
+            'currentPeriodEnd' => $sub['currentPeriodEnd'],
+            'pendingPlan' => $sub['pendingPlan'],
+            'cancelAtPeriodEnd' => $sub['cancelAtPeriodEnd'],
         ]);
     }
 

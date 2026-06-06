@@ -7,6 +7,9 @@ export interface SubscriptionData {
   booksUsed: number
   booksLimit: number
   canCreate: boolean
+  pendingPlan: string | null
+  cancelAtPeriodEnd: boolean
+  currentPeriodEnd: string | null
 }
 
 export function useSubscription() {
@@ -35,4 +38,24 @@ export function usePortal() {
       return data
     },
   })
+}
+
+export function useChangePlan() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (plan: string) => {
+      const { data } = await api.post<{ success: boolean; url?: string }>('/subscription/change', { plan })
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+    },
+  })
+}
+
+export async function syncSubscription(sessionId?: string) {
+  const { data } = await api.post<SubscriptionData>('/subscription/sync', {
+    session_id: sessionId || undefined,
+  })
+  return data
 }

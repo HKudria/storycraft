@@ -7,7 +7,7 @@ use App\Entity\Job;
 use App\Entity\Page;
 use App\Message\GenerateIllustrationMessage;
 use App\Message\GenerateStoryMessage;
-use App\Service\AnthropicService;
+use App\Service\StoryProviderInterface;
 use App\Service\SubscriptionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -18,7 +18,7 @@ class GenerateStoryHandler
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly AnthropicService $anthropicService,
+        private readonly StoryProviderInterface $storyProvider,
         private readonly SubscriptionService $subscriptionService,
         private readonly MessageBusInterface $bus,
     ) {
@@ -62,7 +62,7 @@ class GenerateStoryHandler
                 '{language}' => $book->getLanguage(),
             ]);
 
-            $result = $this->anthropicService->generateStory($prompt);
+            $result = $this->storyProvider->generateStory($prompt);
 
             $pages = $result['pages'] ?? [];
             foreach ($pages as $i => $pageData) {
