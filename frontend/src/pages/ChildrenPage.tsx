@@ -5,7 +5,7 @@ import { useChildren, useCreateChild, useUpdateChild, useDeleteChild } from '../
 import type { ChildData } from '../api/children'
 import { ChildCard } from '../components/ChildCard'
 import { ChildModal } from '../components/ChildModal'
-import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import { AppHeader } from '../components/AppHeader'
 
 export function ChildrenPage() {
   const { t } = useTranslation()
@@ -21,20 +21,10 @@ export function ChildrenPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">← Back</button>
-            <h1 className="text-xl font-bold text-gray-900">{t('children.title')}</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <LanguageSwitcher />
-            <button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-              {t('children.addChild')}
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        left={<><button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">{t('common.back')}</button><h1 className="text-xl font-bold text-gray-900">{t('children.title')}</h1></>}
+        right={<button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">{t('children.addChild')}</button>}
+      />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         {isLoading ? (

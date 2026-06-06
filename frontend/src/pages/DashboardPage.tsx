@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '../hooks/useAuth'
 import { useChildren } from '../api/children'
 import { useBooks, type BookData } from '../api/books'
-import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import { AppHeader } from '../components/AppHeader'
 
 export function DashboardPage() {
-  const { user, logout } = useAuth()
   const { t } = useTranslation()
   const { data: children } = useChildren()
   const { data: books } = useBooks()
@@ -24,20 +22,7 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">{t('app.name')}</h1>
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
-            <span className="text-sm text-gray-600">{user?.name}</span>
-            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full capitalize">{user?.plan}</span>
-            {user?.booksLimit != null && (
-              <span className="text-xs text-gray-400">{t('dashboard.booksUsed', { used: user.booksUsed, limit: user.booksLimit >= 999 ? '∞' : user.booksLimit })}</span>
-            )}
-            <button onClick={logout} className="text-sm text-gray-500 hover:text-gray-700">{t('common.logout')}</button>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useTemplates } from '../api/templates'
 import { TemplateCard } from '../components/TemplateCard'
-import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import { AppHeader } from '../components/AppHeader'
 
 const categoryKey: Record<string, string> = {
   'adventure': 'templates.categoryAdventure',
@@ -30,15 +30,7 @@ export function TemplatesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <a href="/" className="text-xl font-bold text-gray-900">{t('app.name')}</a>
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
-            <a href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">{t('templates.dashboard')}</a>
-          </div>
-        </div>
-      </header>
+      <AppHeader right={<a href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">{t('templates.dashboard')}</a>} />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('templates.title')}</h1>
 

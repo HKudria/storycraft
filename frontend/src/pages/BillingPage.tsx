@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/useAuth'
 import { useSubscription, useCheckout, useChangePlan, useRevertChange } from '../api/subscription'
-import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import { AppHeader } from '../components/AppHeader'
 
 export function BillingPage() {
   const navigate = useNavigate()
@@ -55,15 +55,7 @@ export function BillingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">{t('common.back')}</button>
-            <h1 className="text-xl font-bold text-gray-900">{t('billing.title')}</h1>
-          </div>
-          <LanguageSwitcher />
-        </div>
-      </header>
+      <AppHeader left={<><button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">{t('common.back')}</button><h1 className="text-xl font-bold text-gray-900">{t('billing.title')}</h1></>} />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg border p-6 mb-6">

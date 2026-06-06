@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import api from '../api/client'
 import { useBook, useDeleteBook } from '../api/books'
-import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import { AppHeader } from '../components/AppHeader'
 
 export function BookDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -57,23 +57,10 @@ export function BookDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">{t('common.back')}</button>
-            <h1 className="text-xl font-bold text-gray-900">{book.title || book.topic}</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <LanguageSwitcher />
-            {book.status === 'done' && (
-              <button onClick={handleDownloadPdf} disabled={pdfLoading} className="text-sm bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 disabled:opacity-50">
-                {pdfLoading ? t('common.loading') : t('bookDetail.downloadPdf')}
-              </button>
-            )}
-            <button onClick={handleDelete} className="text-sm text-red-600 hover:text-red-800">{t('common.delete')}</button>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        left={<><button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">{t('common.back')}</button><h1 className="text-xl font-bold text-gray-900 truncate">{book.title || book.topic}</h1></>}
+        right={<>{book.status === 'done' && (<button onClick={handleDownloadPdf} disabled={pdfLoading} className="text-sm bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 disabled:opacity-50">{pdfLoading ? t('common.loading') : t('bookDetail.downloadPdf')}</button>)}<button onClick={handleDelete} className="text-sm text-red-600 hover:text-red-800">{t('common.delete')}</button></>}
+      />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <StatusBanner status={book.status} hasImages={hasImages ?? false} hasAllImages={hasAllImages ?? false} />
