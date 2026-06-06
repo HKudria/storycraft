@@ -19,6 +19,15 @@ const descKey: Record<string, string> = {
   'Ocean': 'templates.oceanDesc',
 }
 
+const categoryKey: Record<string, string> = {
+  'adventure': 'templates.categoryAdventure',
+  'bedtime': 'templates.categoryBedtime',
+  'educational': 'templates.categoryEducational',
+  'fantasy': 'templates.categoryFantasy',
+  'sci-fi': 'templates.categorySciFi',
+  'nature': 'templates.categoryNature',
+}
+
 interface Props {
   template: TemplateData
   onSelect: (template: TemplateData) => void
@@ -30,7 +39,7 @@ export function TemplateCard({ template, onSelect }: Props) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full capitalize">{template.category}</span>
+        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">{t(categoryKey[template.category] || template.category)}</span>
         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{t('templateCard.ages', { min: template.ageMin, max: template.ageMax })}</span>
       </div>
       <h3 className="font-semibold text-gray-900">{t(titleKey[template.title] || template.title)}</h3>
