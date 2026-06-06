@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useTemplates } from '../api/templates'
 import { TemplateCard } from '../components/TemplateCard'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
+
+const categoryKey: Record<string, string> = {
+  'adventure': 'templates.categoryAdventure',
+  'bedtime': 'templates.categoryBedtime',
+  'educational': 'templates.categoryEducational',
+  'fantasy': 'templates.categoryFantasy',
+  'sci-fi': 'templates.categorySciFi',
+  'nature': 'templates.categoryNature',
+}
 
 export function TemplatesPage() {
   const [category, setCategory] = useState<string>('')
@@ -23,7 +33,10 @@ export function TemplatesPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <a href="/" className="text-xl font-bold text-gray-900">{t('app.name')}</a>
-          <a href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">{t('templates.dashboard')}</a>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <a href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">{t('templates.dashboard')}</a>
+          </div>
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -35,7 +48,7 @@ export function TemplatesPage() {
           </button>
           {categories.map((cat) => (
             <button key={cat} onClick={() => setCategory(cat)} className={`px-3 py-1 rounded-full text-sm capitalize ${category === cat ? 'bg-indigo-600 text-white' : 'bg-white border text-gray-700 hover:bg-gray-50'}`}>
-              {cat}
+              {t(categoryKey[cat] || cat)}
             </button>
           ))}
         </div>

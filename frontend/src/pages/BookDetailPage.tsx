@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import api from '../api/client'
 import { useBook, useDeleteBook } from '../api/books'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 export function BookDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -63,6 +64,7 @@ export function BookDetailPage() {
             <h1 className="text-xl font-bold text-gray-900">{book.title || book.topic}</h1>
           </div>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             {book.status === 'done' && (
               <button onClick={handleDownloadPdf} disabled={pdfLoading} className="text-sm bg-indigo-600 text-white px-3 py-1 rounded-lg hover:bg-indigo-700 disabled:opacity-50">
                 {pdfLoading ? t('common.loading') : t('bookDetail.downloadPdf')}

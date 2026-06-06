@@ -5,6 +5,7 @@ import { useChildren, useCreateChild, useUpdateChild, useDeleteChild } from '../
 import type { ChildData } from '../api/children'
 import { ChildCard } from '../components/ChildCard'
 import { ChildModal } from '../components/ChildModal'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 
 export function ChildrenPage() {
   const { t } = useTranslation()
@@ -26,9 +27,12 @@ export function ChildrenPage() {
             <button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">← Back</button>
             <h1 className="text-xl font-bold text-gray-900">{t('children.title')}</h1>
           </div>
-          <button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-            {t('children.addChild')}
-          </button>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+              {t('children.addChild')}
+            </button>
+          </div>
         </div>
       </header>
 

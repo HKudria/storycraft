@@ -67,7 +67,25 @@
   },
   "templates": {
     "title": "Geschichtenvorlagen",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "adventure": "Abenteuer",
+    "adventureDesc": "Eine aufregende Reise voller Überraschungen und Mut",
+    "bedtime": "Gute-Nacht-Geschichte",
+    "bedtimeDesc": "Eine beruhigende Geschichte zum Einschlafen",
+    "educational": "Lehrreich",
+    "educationalDesc": "Lernen Sie etwas Neues durch eine lustige Geschichte",
+    "fairyTale": "Marchen",
+    "fairyTaleDesc": "Eine magische Geschichte voller Zauber und Wunder",
+    "space": "Weltall",
+    "spaceDesc": "Starten Sie zu einem interstellaren Abenteuer",
+    "ocean": "Ozean",
+    "oceanDesc": "Tauchen Sie ein in eine Unterwasserwelt voller Entdeckungen",
+    "categoryAdventure": "Abenteuer",
+    "categoryBedtime": "Gute-Nacht-Geschichte",
+    "categoryEducational": "Lehrreich",
+    "categoryFantasy": "Fantasy",
+    "categorySciFi": "Sci-fi",
+    "categoryNature": "Natur"
   },
   "templateCard": {
     "ages": "Alter {{min}}–{{max}}",

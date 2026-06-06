@@ -67,7 +67,25 @@
   },
   "templates": {
     "title": "Шаблоны историй",
-    "dashboard": "Панель управления"
+    "dashboard": "Панель управления",
+    "adventure": "Приключения",
+    "adventureDesc": "Захватывающее путешествие, полное неожиданностей и отваги",
+    "bedtime": "На ночь",
+    "bedtimeDesc": "Успокаивающая история, помогающая уснуть",
+    "educational": "Познавательная",
+    "educationalDesc": "Узнайте что-то новое через увлекательную историю",
+    "fairyTale": "Сказка",
+    "fairyTaleDesc": "Волшебная история с чарами и чудесами",
+    "space": "Космос",
+    "spaceDesc": "Отправляйтесь в межзвёздное приключение",
+    "ocean": "Океан",
+    "oceanDesc": "Погрузитесь в подводный мир открытий",
+    "categoryAdventure": "Приключения",
+    "categoryBedtime": "На ночь",
+    "categoryEducational": "Познавательная",
+    "categoryFantasy": "Фантастика",
+    "categorySciFi": "Sci-fi",
+    "categoryNature": "Природа"
   },
   "templateCard": {
     "ages": "Возраст {{min}}–{{max}}",

@@ -67,7 +67,25 @@
   },
   "templates": {
     "title": "Story Templates",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "adventure": "Adventure",
+    "adventureDesc": "An exciting journey full of surprises and bravery",
+    "bedtime": "Bedtime",
+    "bedtimeDesc": "A calming story to help drift off to sleep",
+    "educational": "Educational",
+    "educationalDesc": "Learn something new through a fun story",
+    "fairyTale": "Fairy Tale",
+    "fairyTaleDesc": "A magical story with enchantment and wonder",
+    "space": "Space",
+    "spaceDesc": "Blast off on an interstellar adventure",
+    "ocean": "Ocean",
+    "oceanDesc": "Dive into an underwater world of discovery",
+    "categoryAdventure": "Adventure",
+    "categoryBedtime": "Bedtime",
+    "categoryEducational": "Educational",
+    "categoryFantasy": "Fantasy",
+    "categorySciFi": "Sci-fi",
+    "categoryNature": "Nature"
   },
   "templateCard": {
     "ages": "Ages {{min}}–{{max}}",

@@ -67,7 +67,25 @@
   },
   "templates": {
     "title": "Szablony opowieści",
-    "dashboard": "Panel główny"
+    "dashboard": "Panel główny",
+    "adventure": "Przygoda",
+    "adventureDesc": "Ekscytująca podróż pełna niespodzianek i odwagi",
+    "bedtime": "Na dobranoc",
+    "bedtimeDesc": "Usypiająca opowieść pomagająca zasnąć",
+    "educational": "Edukacyjna",
+    "educationalDesc": "Naucz się czegoś nowego przez zabawną opowieść",
+    "fairyTale": "Bajka",
+    "fairyTaleDesc": "Magiczna opowieść pełna czarów i cudów",
+    "space": "Kosmos",
+    "spaceDesc": "Wystartuj w międzygwiezdną przygodę",
+    "ocean": "Ocean",
+    "oceanDesc": "Zanurz się w podwodnym świecie odkryć",
+    "categoryAdventure": "Przygoda",
+    "categoryBedtime": "Na dobranoc",
+    "categoryEducational": "Edukacyjna",
+    "categoryFantasy": "Fantastyka",
+    "categorySciFi": "Sci-fi",
+    "categoryNature": "Natura"
   },
   "templateCard": {
     "ages": "Wiek {{min}}–{{max}}",
