@@ -12,5 +12,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+RUN mkdir -p var/cache var/log /var/log/storycraft && chown -R www-data:www-data var/ /var/log/storycraft
+
 EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["sh", "-c", "mkdir -p var/cache var/log && chown -R www-data:www-data var/ && php-fpm"]

@@ -48,10 +48,16 @@ services:
             $region: '%env(S3_REGION)%'
             $publicUrl: '%env(S3_PUBLIC_URL)%'
 
+    Hidehalo\Nanoid\Client: ~
+
     App\Service\SubscriptionService:
         arguments:
             $basicPriceId: '%env(STRIPE_BASIC_PRICE_ID)%'
             $proPriceId: '%env(STRIPE_PRO_PRICE_ID)%'
+
+    App\Service\ReferralService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
 
     App\Controller\SubscriptionController:
         arguments:
@@ -59,3 +65,7 @@ services:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
             $basicPriceId: '%env(STRIPE_BASIC_PRICE_ID)%'
             $proPriceId: '%env(STRIPE_PRO_PRICE_ID)%'
+
+    App\Controller\ReferralController:
+        arguments:
+            $frontendUrl: '%env(APP_FRONTEND_URL)%'

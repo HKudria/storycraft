@@ -12,6 +12,9 @@ import { NewBookPage } from './pages/NewBookPage'
 import { BookDetailPage } from './pages/BookDetailPage'
 import { PricingPage } from './pages/PricingPage'
 import { BillingPage } from './pages/BillingPage'
+import { ReferralsPage } from './pages/ReferralsPage'
+import { CatalogPage } from './pages/CatalogPage'
+import { PublicBookPage } from './pages/PublicBookPage'
 import { syncSubscription } from './api/subscription'
 
 const queryClient = new QueryClient({
@@ -32,6 +35,7 @@ function AuthCallbackPage() {
     const token = searchParams.get('token')
     if (token) {
       loginWithToken(token)
+      localStorage.removeItem('referral_code')
       navigate('/dashboard', { replace: true })
     } else {
       navigate('/login', { replace: true })
@@ -82,9 +86,12 @@ function App() {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/billing/success" element={<AuthGuard><BillingSuccessPage /></AuthGuard>} />
             <Route path="/templates" element={<TemplatesPage />} />
+            <Route path="/catalog" element={<CatalogPage />} />
+            <Route path="/catalog/:id" element={<PublicBookPage />} />
             <Route path="/dashboard" element={<AuthGuard><DashboardPage /></AuthGuard>} />
             <Route path="/dashboard/children" element={<AuthGuard><ChildrenPage /></AuthGuard>} />
             <Route path="/dashboard/billing" element={<AuthGuard><BillingPage /></AuthGuard>} />
+            <Route path="/dashboard/referrals" element={<AuthGuard><ReferralsPage /></AuthGuard>} />
             <Route path="/books/new" element={<AuthGuard><NewBookPage /></AuthGuard>} />
             <Route path="/books/:id" element={<AuthGuard><BookDetailPage /></AuthGuard>} />
           </Routes>

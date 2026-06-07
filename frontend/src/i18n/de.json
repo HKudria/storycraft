@@ -22,7 +22,11 @@
     "continueWithGoogle": "Mit Google fortfahren",
     "devLogin": "Dev-Anmeldung",
     "loggingIn": "Anmeldung...",
-    "devLoginFailed": "Dev-Anmeldung fehlgeschlagen"
+    "devLoginFailed": "Dev-Anmeldung fehlgeschlagen",
+    "login": "Anmelden",
+    "tagline": "Erstellen Sie magische personalisierte Büchern für Ihre Kinder",
+    "welcome": "Willkommen zurück!",
+    "browseCatalog": "Öffentliche Bibliothek durchsuchen"
   },
   "dashboard": {
     "children": "Kinder",
@@ -33,6 +37,10 @@
     "createBookDesc": "Ein neues Buch starten",
     "billing": "Abrechnung & Plan",
     "billingDesc": "Abonnement & Nutzung verwalten",
+    "catalog": "Öffentliche Bibliothek",
+    "catalogDesc": "Geschichten der Community durchsuchen",
+    "referrals": "Empfehlungen",
+    "referralsDesc": "Freunde einladen und Bonus-Bücher verdienen",
     "myBooks": "Meine Bücher",
     "filter": "Filter:",
     "noBooks": "Noch keine Bücher.",
@@ -199,5 +207,51 @@
     "ru": "Русский",
     "de": "Deutsch",
     "fr": "Français"
+  },
+  "referrals": {
+    "title": "Empfehlungsprogramm",
+    "yourLink": "Ihr Empfehlungslink",
+    "bonusInfo": "Wenn sich jemand über Ihren Link registriert und abonniert, erhalten Sie +2 zusätzliche Bücher für diesen Monat!",
+    "bonusInfoPro": "Wenn sich jemand über Ihren Link registriert und abonniert, erhalten Sie 5 $ Rabatt auf die nächste Abrechnung!",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "total": "Gesamt Empfehlungen",
+    "rewarded": "Belohnt",
+    "name": "Name",
+    "status": "Status",
+    "date": "Datum",
+    "pending": "Ausstehend",
+    "rewardedStatus": "Belohnt",
+    "noReferrals": "Noch keine Empfehlungen. Teilen Sie Ihren Link, um Freunde einzuladen!"
+  },
+  "catalog": {
+    "title": "Öffentliche Bibliothek",
+    "subtitle": "Durchsuchen Sie von der Community erstellte Bücher",
+    "noBooks": "Keine öffentlichen Bücher gefunden.",
+    "filterTemplate": "Vorlage",
+    "filterLanguage": "Sprache",
+    "filterRating": "Min. Bewertung",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "page": "Seite {{page}} von {{total}}",
+    "backToCatalog": "← Zurück zum Katalog",
+    "dashboard": "Dashboard"
+  },
+  "ratings": {
+    "title": "Bewertungen",
+    "submitRating": "Dieses Buch bewerten",
+    "ratingSubmitted": "Bewertung abgegeben!",
+    "noRatings": "Noch keine Bewertungen.",
+    "addComment": "Kommentar hinzufügen (optional)",
+    "submit": "Bewertung abgeben",
+    "loginToRate": "Melden Sie sich an, um dieses Buch zu bewerten."
+  },
+  "bookCard": {
+    "public": "Öffentlich",
+    "private": "Privat",
+    "makePublic": "Veröffentlichen",
+    "makePrivate": "Privat machen",
+    "visibility": "Sichtbarkeit",
+    "publicNotice": "Dieses Buch ist im öffentlichen Katalog sichtbar."
   }
 }

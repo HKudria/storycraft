@@ -13,6 +13,9 @@ error.sync_failed: 'Ошибка синхронизации.'
 error.not_available: 'Недоступно.'
 error.no_refresh_token: 'Нет токена обновления.'
 error.invalid_refresh_token: 'Недействительный или просроченный токен обновления.'
+error.book_not_done: 'Книга ещё не завершена.'
+error.invalid_rating_score: 'Оценка должна быть от 1 до 5.'
+error.already_rated: 'Вы уже оценили эту книгу.'
 
 # Генерация истории
 story.pet_line: 'У них есть питомец по имени {petName}.'

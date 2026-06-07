@@ -15,4 +15,14 @@ class ReferralRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Referral::class);
     }
+
+    public function findPendingByReferee(int $refereeId): ?Referral
+    {
+        return $this->findOneBy(['referee' => $refereeId, 'status' => Referral::STATUS_PENDING]);
+    }
+
+    public function findByReferrer(int $referrerId): array
+    {
+        return $this->findBy(['referrer' => $referrerId], ['createdAt' => 'DESC']);
+    }
 }

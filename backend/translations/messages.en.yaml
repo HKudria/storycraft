@@ -13,6 +13,9 @@ error.sync_failed: 'Sync failed.'
 error.not_available: 'Not available.'
 error.no_refresh_token: 'No refresh token.'
 error.invalid_refresh_token: 'Invalid or expired refresh token.'
+error.book_not_done: 'Book is not finished yet.'
+error.invalid_rating_score: 'Rating score must be between 1 and 5.'
+error.already_rated: 'You have already rated this book.'
 
 # Story generation
 story.pet_line: 'They have a pet named {petName}.'

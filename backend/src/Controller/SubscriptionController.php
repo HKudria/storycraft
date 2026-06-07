@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Subscription;
+use App\Service\ReferralService;
 use App\Service\SubscriptionService;
 use Stripe\Stripe;
 use Stripe\Subscription as StripeSubscription;
@@ -21,6 +22,7 @@ class SubscriptionController extends AbstractController
 
     public function __construct(
         private readonly SubscriptionService $subscriptionService,
+        private readonly ReferralService $referralService,
         private readonly TranslatorInterface $translator,
         private readonly string $frontendUrl,
         string $stripeSecretKey,
@@ -375,6 +377,11 @@ class SubscriptionController extends AbstractController
                         $periodStart,
                         $periodEnd,
                     );
+
+                    $referee = $this->getDoctrine()->getRepository(\App\Entity\User::class)->find($userId);
+                    if ($referee) {
+                        $this->referralService->rewardReferrer($referee);
+                    }
                 }
                 break;
 

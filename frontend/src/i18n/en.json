@@ -23,7 +23,11 @@
     "continueWithGoogle": "Continue with Google",
     "devLogin": "Dev Login",
     "loggingIn": "Logging in...",
-    "devLoginFailed": "Dev login failed"
+    "devLoginFailed": "Dev login failed",
+    "login": "Log in",
+    "tagline": "Create magical personalised storybooks for your children",
+    "welcome": "Welcome back!",
+    "browseCatalog": "Browse the public library"
   },
   "dashboard": {
     "children": "Children",
@@ -34,6 +38,10 @@
     "createBookDesc": "Start a new storybook",
     "billing": "Billing & Plan",
     "billingDesc": "Manage subscription & usage",
+    "catalog": "Public Library",
+    "catalogDesc": "Browse stories by the community",
+    "referrals": "Referrals",
+    "referralsDesc": "Invite friends and earn bonus books",
     "myBooks": "My Books",
     "filter": "Filter:",
     "noBooks": "No books yet.",
@@ -200,5 +208,51 @@
     "ru": "Русский",
     "de": "Deutsch",
     "fr": "Français"
+  },
+  "referrals": {
+    "title": "Referral Program",
+    "yourLink": "Your Referral Link",
+    "bonusInfo": "When someone signs up via your link and subscribes, you get +2 extra books for that month!",
+    "bonusInfoPro": "When someone signs up via your link and subscribes, you get a $5 discount on your next billing!",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "total": "Total Referrals",
+    "rewarded": "Rewarded",
+    "name": "Name",
+    "status": "Status",
+    "date": "Date",
+    "pending": "Pending",
+    "rewardedStatus": "Rewarded",
+    "noReferrals": "No referrals yet. Share your link to invite friends!"
+  },
+  "catalog": {
+    "title": "Public Library",
+    "subtitle": "Browse stories created by the community",
+    "noBooks": "No public books found.",
+    "filterTemplate": "Template",
+    "filterLanguage": "Language",
+    "filterRating": "Min Rating",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{page}} of {{total}}",
+    "backToCatalog": "← Back to catalog",
+    "dashboard": "Dashboard"
+  },
+  "ratings": {
+    "title": "Ratings",
+    "submitRating": "Rate this book",
+    "ratingSubmitted": "Rating submitted!",
+    "noRatings": "No ratings yet.",
+    "addComment": "Add a comment (optional)",
+    "submit": "Submit Rating",
+    "loginToRate": "Log in to rate this book."
+  },
+  "bookCard": {
+    "public": "Public",
+    "private": "Private",
+    "makePublic": "Make Public",
+    "makePrivate": "Make Private",
+    "visibility": "Visibility",
+    "publicNotice": "This book is visible in the public catalog."
   }
 }

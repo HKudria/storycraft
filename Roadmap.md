@@ -11,8 +11,8 @@
 | 4 | Illustrations & PDF | Cloudflare AI (Flux), mPDF assembly, MinIO/S3 storage | **Done** |
 | 5 | Subscriptions & Billing | Plans, limits, billing UI, Stripe integration | **Done** |
 | 6 | Multilingual i18n | UI translations (en/pl/ua/ru/de), backend translations, PDF localisation | **Done** |
-| 7 | Referral Program | Referral codes, bonus logic | |
-| 8 | Ratings & Public Catalog | Book ratings, public catalog page | |
+| 7 | Referral Program | Referral codes, bonus logic | **Done** |
+| 8 | Ratings & Public Catalog | Book ratings, public catalog page | **Done** |
 | 9 | Production | CI/CD, monitoring, security hardening, deploy | |
 
 ---
@@ -372,18 +372,18 @@
 ## Phase 7 — Referral Program
 
 ### 7.1 Backend
-- [ ] Generate unique `referralCode` on `User` creation (e.g. `nanoid`, 8 chars)
-- [ ] `ReferralController`:
+- [x] Generate unique `referralCode` on `User` creation (e.g. `nanoid`, 8 chars)
+- [x] `ReferralController`:
   - `GET /api/referrals/me` — return `{ code, referralUrl, referrals: [...] }`
   - List shows referred users: name, join date, reward status
-- [ ] On user registration: if `?ref=CODE` in session → create `Referral { referrerId, refereeId, status: pending }`
-- [ ] `ReferralService::rewardReferrer(User $referee)` — called after referee's first payment:
+- [x] On user registration: if `?ref=CODE` in session → create `Referral { referrerId, refereeId, status: pending }`
+- [x] `ReferralService::rewardReferrer(User $referee)` — called after referee's first payment:
   - Set `Referral.status = rewarded`
   - Apply bonus to referrer (e.g. `booksLimit += 2` for one month, or discount via Stripe coupon)
-- [ ] Hook into `StripeWebhookService::handleFirstPayment()` to call `ReferralService`
+- [x] Hook into `StripeWebhookService::handleFirstPayment()` to call `ReferralService`
 
-### 6.2 Frontend
-- [ ] `/dashboard/referrals` page:
+### 7.2 Frontend
+- [x] `/dashboard/referrals` page:
   - Referral link with copy-to-clipboard button
   - Stats: how many invited, how many converted, total bonuses earned
   - Table of referred users (name, joined date, reward status)
@@ -393,24 +393,24 @@
 ## Phase 8 — Ratings & Public Catalog
 
 ### 8.1 Backend — Ratings
-- [ ] `RatingController`:
+- [x] `RatingController`:
   - `POST /api/books/:id/ratings` — submit rating (score 1–5, optional comment); one per user per book
   - `GET /api/books/:id/ratings` — list ratings for a book
-- [ ] Aggregate average rating on `Book` entity (computed on save)
-- [ ] `TemplateService::getAverageRating(Template $template): float` — based on all books using that template
+- [x] Aggregate average rating on `Book` entity (computed on save)
+- [x] `TemplateService::getAverageRating(Template $template): float` — based on all books using that template
 
 ### 8.2 Backend — Public catalog
-- [ ] `CatalogController`:
+- [x] `CatalogController`:
   - `GET /api/catalog` — public books (`Book.isPublic = true`), paginated
   - Filters: `?templateId=`, `?language=`, `?minRating=`
   - Returns book title, template, language, rating, cover image (first page illustration)
-- [ ] `PATCH /api/books/:id/visibility` — toggle `isPublic` (owner only)
+- [x] `PATCH /api/books/:id/visibility` — toggle `isPublic` (owner only)
 
 ### 8.3 Frontend
-- [ ] `/catalog` page — public book gallery with filter sidebar
-- [ ] `BookCard` — cover image, title, rating stars, template name
-- [ ] `StarRating` component — interactive rating input shown after book is done
-- [ ] Visibility toggle in `/dashboard/books` list
+- [x] `/catalog` page — public book gallery with filter sidebar
+- [x] `BookCard` — cover image, title, rating stars, template name
+- [x] `StarRating` component — interactive rating input shown after book is done
+- [x] Visibility toggle in `/dashboard/books` list
 
 ---
 

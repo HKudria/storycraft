@@ -92,6 +92,21 @@ class BookController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    #[Route('/api/books/{id}/visibility', name: 'books_visibility', methods: ['PATCH'])]
+    public function toggleVisibility(int $id): JsonResponse
+    {
+        try {
+            $book = $this->bookService->findForUser($this->getUser(), $id);
+        } catch (\RuntimeException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], $e->getCode() ?: 404);
+        }
+
+        $book->setIsPublic(!$book->isPublic());
+        $this->bookService->save($book);
+
+        return new JsonResponse(['isPublic' => $book->isPublic()]);
+    }
+
     private function serializeBook(Book $book): array
     {
         return [
@@ -102,7 +117,11 @@ class BookController extends AbstractController
             'status' => $book->getStatus(),
             'childId' => $book->getChild()?->getId(),
             'childName' => $book->getChild()?->getName(),
+            'templateId' => $book->getTemplate()?->getId(),
             'templateTitle' => $book->getTemplate()?->getTitle(),
+            'isPublic' => $book->isPublic(),
+            'averageRating' => $book->getAverageRating(),
+            'ratingCount' => $book->getRatingCount(),
             'createdAt' => $book->getCreatedAt()->format(\DateTimeInterface::ATOM),
         ];
     }

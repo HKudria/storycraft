@@ -5,6 +5,7 @@ namespace App\Security;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Hidehalo\Nanoid\Client as NanoidClient;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class AuthService
@@ -13,6 +14,7 @@ class AuthService
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $em,
         private readonly JWTTokenManagerInterface $jwtManager,
+        private readonly NanoidClient $nanoid,
     ) {
     }
 
@@ -30,6 +32,7 @@ class AuthService
             $user = new User();
             $user->setGoogleId($googleId);
             $user->setEmail($email);
+            $user->setReferralCode($this->generateUniqueReferralCode());
         }
 
         $user->setName($name);
@@ -82,5 +85,14 @@ class AuthService
     {
         $user->setRefreshToken(null);
         $this->em->flush();
+    }
+
+    public function generateUniqueReferralCode(): string
+    {
+        do {
+            $code = $this->nanoid->formatedId('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
+        } while ($this->userRepository->findOneBy(['referralCode' => $code]));
+
+        return $code;
     }
 }

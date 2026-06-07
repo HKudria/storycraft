@@ -82,4 +82,10 @@ class BookService
         $this->em->remove($book);
         $this->em->flush();
     }
+
+    public function save(Book $book): void
+    {
+        $book->setUpdatedAt(new \DateTimeImmutable());
+        $this->em->flush();
+    }
 }

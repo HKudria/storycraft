@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Security\AuthService;
+use App\Service\ReferralService;
 use App\Service\SubscriptionService;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -20,20 +21,26 @@ class AuthController extends AbstractController
         private readonly AuthService $authService,
         private readonly EntityManagerInterface $em,
         private readonly SubscriptionService $subscriptionService,
+        private readonly ReferralService $referralService,
         private readonly TranslatorInterface $translator,
     ) {
     }
 
     #[Route('/api/auth/google', name: 'auth_google', methods: ['GET'])]
-    public function googleRedirect(ClientRegistry $clientRegistry): Response
+    public function googleRedirect(Request $request, ClientRegistry $clientRegistry): Response
     {
+        $referralCode = $request->query->get('ref');
+        if ($referralCode) {
+            $request->getSession()->set('referral_code', $referralCode);
+        }
+
         return $clientRegistry
             ->getClient('google')
             ->redirect(['email', 'profile'], []);
     }
 
     #[Route('/api/auth/google/callback', name: 'auth_google_callback', methods: ['GET'])]
-    public function googleCallback(ClientRegistry $clientRegistry): Response
+    public function googleCallback(Request $request, ClientRegistry $clientRegistry): Response
     {
         $client = $clientRegistry->getClient('google');
         $googleUser = $client->fetchUser();
@@ -45,6 +52,12 @@ class AuthController extends AbstractController
             $googleUser->getAvatar(),
         );
 
+        $referralCode = $request->getSession()->get('referral_code');
+        $request->getSession()->remove('referral_code');
+        if ($referralCode) {
+            $this->referralService->processReferralCode($user, $referralCode);
+        }
+
         $tokens = $this->authService->issueTokens($user);
 
         $response = $this->redirect($_ENV['APP_FRONTEND_URL'] . '/auth/callback?token=' . $tokens['accessToken']);
@@ -54,7 +67,7 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/auth/dev-login', name: 'auth_dev_login', methods: ['POST'])]
-    public function devLogin(): JsonResponse
+    public function devLogin(Request $request): JsonResponse
     {
         if ($this->getParameter('kernel.environment') !== 'dev') {
             return new JsonResponse(['error' => $this->translator->trans('error.not_available')], Response::HTTP_NOT_FOUND);
@@ -66,6 +79,12 @@ class AuthController extends AbstractController
             'Developer',
             null,
         );
+
+        $data = json_decode($request->getContent(), true);
+        $referralCode = $data['ref'] ?? null;
+        if ($referralCode) {
+            $this->referralService->processReferralCode($user, $referralCode);
+        }
 
         $tokens = $this->authService->issueTokens($user);
 

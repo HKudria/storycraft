@@ -22,7 +22,11 @@
     "continueWithGoogle": "Kontynuuj z Google",
     "devLogin": "Logowanie dev",
     "loggingIn": "Logowanie...",
-    "devLoginFailed": "Logowanie dev nie powiodło się"
+    "devLoginFailed": "Logowanie dev nie powiodło się",
+    "login": "Zaloguj się",
+    "tagline": "Twórz magiczne spersonalizowane książeczki dla swoich dzieci",
+    "welcome": "Witaj ponownie!",
+    "browseCatalog": "Przeglądaj bibliotekę publiczną"
   },
   "dashboard": {
     "children": "Dzieci",
@@ -33,6 +37,10 @@
     "createBookDesc": "Stwórz nową książeczkę",
     "billing": "Rachunki i plan",
     "billingDesc": "Zarządzaj subskrypcją i użyciem",
+    "catalog": "Biblioteka publiczna",
+    "catalogDesc": "Przeglądaj historie społeczności",
+    "referrals": "Polecaj",
+    "referralsDesc": "Zaproś znajomych i zdobywaj bonusowe książki",
     "myBooks": "Moje książki",
     "filter": "Filtr:",
     "noBooks": "Brak książek.",
@@ -199,5 +207,51 @@
     "ru": "Русский",
     "de": "Deutsch",
     "fr": "Français"
+  },
+  "referrals": {
+    "title": "Program poleceń",
+    "yourLink": "Twój link polecający",
+    "bonusInfo": "Gdy ktoś zarejestruje się z Twojego linku i wykupi subskrypcję, otrzymasz +2 dodatkowe książki na ten miesiąc!",
+    "bonusInfoPro": "Gdy ktoś zarejestruje się z Twojego linku i wykupi subskrypcję, otrzymasz $5 zniżki na kolejne rozliczenie!",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano!",
+    "total": "Łączne polecenia",
+    "rewarded": "Nagrodzone",
+    "name": "Imię",
+    "status": "Status",
+    "date": "Data",
+    "pending": "Oczekujące",
+    "rewardedStatus": "Nagrodzone",
+    "noReferrals": "Brak poleceń. Udostępnij swój link, aby zaprosić znajomych!"
+  },
+  "catalog": {
+    "title": "Biblioteka publiczna",
+    "subtitle": "Przeglądaj książki stworzone przez społeczność",
+    "noBooks": "Nie znaleziono publicznych książek.",
+    "filterTemplate": "Szablon",
+    "filterLanguage": "Język",
+    "filterRating": "Min. ocena",
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "page": "Strona {{page}} z {{total}}",
+    "backToCatalog": "← Wróć do katalogu",
+    "dashboard": "Panel główny"
+  },
+  "ratings": {
+    "title": "Oceny",
+    "submitRating": "Oceń tę książkę",
+    "ratingSubmitted": "Ocena dodana!",
+    "noRatings": "Brak ocen.",
+    "addComment": "Dodaj komentarz (opcjonalnie)",
+    "submit": "Wyślij ocenę",
+    "loginToRate": "Zaloguj się, aby ocenić tę książkę."
+  },
+  "bookCard": {
+    "public": "Publiczna",
+    "private": "Prywatna",
+    "makePublic": "Udostępnij publicznie",
+    "makePrivate": "Ukryj",
+    "visibility": "Widoczność",
+    "publicNotice": "Ta książka jest widoczna w publicznym katalogu."
   }
 }

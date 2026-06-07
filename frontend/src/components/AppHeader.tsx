@@ -14,6 +14,12 @@ const languages = [
   { code: 'de', label: 'Deutsch' },
 ]
 
+const planColors: Record<string, string> = {
+  free: 'bg-ocean-400 text-white',
+  basic: 'bg-sunny-400 text-white',
+  pro: 'bg-warm-700 text-white',
+}
+
 interface Props {
   left?: React.ReactNode
   right?: React.ReactNode
@@ -50,24 +56,36 @@ export function AppHeader({ left, right }: Props) {
   }, [menuOpen])
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-warm-100/50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4 min-w-0">
           {left ?? (
-            <Link to="/dashboard" className="text-xl font-bold text-gray-900 truncate">
+            <Link to="/dashboard" className="text-xl font-extrabold gradient-brand truncate">
               {t('app.name')}
             </Link>
           )}
         </div>
 
         <div className="flex items-center gap-3">
+          <Link to="/catalog" className="text-sm font-semibold text-midnight/60 hover:text-warm-700 transition-colors">
+            {t('catalog.title')}
+          </Link>
+
+          {!isAuthenticated && (
+            <Link to="/login" className="gradient-btn px-4 py-1.5 text-white rounded-full text-sm font-semibold">
+              {t('auth.login')}
+            </Link>
+          )}
+
           {right}
 
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                menuOpen ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${
+                menuOpen
+                  ? 'bg-warm-700 text-white shadow-warm'
+                  : 'bg-warm-100 text-warm-700 hover:bg-warm-500 hover:text-white'
               }`}
               aria-label="Menu"
             >
@@ -79,14 +97,16 @@ export function AppHeader({ left, right }: Props) {
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-warm border border-warm-100 z-50 overflow-hidden animate-bounce-in">
                   {user && (
-                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                      <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                    <div className="px-4 py-3 border-b border-cream-200 bg-cream-50">
+                      <p className="text-sm font-semibold text-midnight truncate">{user.name}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded capitalize">{user.plan}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-semibold capitalize ${planColors[user.plan] || 'bg-gray-200 text-gray-700'}`}>
+                          {user.plan}
+                        </span>
                         {user.booksLimit != null && (
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-warm-700/60">
                             {t('dashboard.booksUsed', { used: user.booksUsed, limit: user.booksLimit >= 999 ? '∞' : user.booksLimit })}
                           </span>
                         )}
@@ -94,17 +114,17 @@ export function AppHeader({ left, right }: Props) {
                     </div>
                   )}
 
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">{t('common.language')}</p>
+                  <div className="px-4 py-3 border-b border-cream-200">
+                    <p className="text-xs text-warm-700/40 uppercase tracking-wider mb-2 font-semibold">{t('common.language')}</p>
                     <div className="grid grid-cols-2 gap-1">
                       {languages.map((l) => (
                         <button
                           key={l.code}
                           onClick={() => { handleLanguageChange(l.code); setMenuOpen(false) }}
-                          className={`px-3 py-2 rounded-lg text-sm text-left transition-colors ${
+                          className={`px-3 py-2 rounded-xl text-sm text-left transition-all duration-150 ${
                             currentLang === l.code
-                              ? 'bg-indigo-50 text-indigo-700 font-medium'
-                              : 'text-gray-600 hover:bg-gray-50'
+                              ? 'bg-warm-100 text-warm-700 font-semibold'
+                              : 'text-midnight/60 hover:bg-cream-100'
                           }`}
                         >
                           {l.label}
@@ -117,7 +137,7 @@ export function AppHeader({ left, right }: Props) {
                     <div className="p-2">
                       <button
                         onClick={() => { setMenuOpen(false); logout() }}
-                        className="w-full px-3 py-2 text-sm text-left rounded-lg text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+                        className="w-full px-3 py-2 text-sm text-left rounded-xl text-candy-500 hover:bg-candy-400/10 transition-colors duration-150 flex items-center gap-2 font-semibold"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

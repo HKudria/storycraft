@@ -29,7 +29,9 @@ security:
         - { path: ^/api/auth/(google|dev-login|refresh), roles: PUBLIC_ACCESS }
         - { path: ^/api/health, roles: PUBLIC_ACCESS }
         - { path: ^/api/templates, roles: PUBLIC_ACCESS }
+        - { path: ^/api/catalog, roles: PUBLIC_ACCESS }
         - { path: ^/api/webhooks/, roles: PUBLIC_ACCESS }
+        - { path: ^/api/books/\d+/ratings, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api, roles: ROLE_USER }
 
 when@test:

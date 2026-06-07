@@ -75,8 +75,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      APP_ENV: dev
     networks:
       - storycraft_network
 
@@ -91,9 +89,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    entrypoint: ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600"]
-    environment:
-      APP_ENV: dev
+    entrypoint: ["sh", "-c", "mkdir -p var/cache var/log && chown -R www-data:www-data var/ && php bin/console messenger:consume async --time-limit=3600"]
     networks:
       - storycraft_network
 

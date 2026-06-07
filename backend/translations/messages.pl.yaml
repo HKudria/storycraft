@@ -13,6 +13,9 @@ error.sync_failed: 'Synchronizacja nie powiodła się.'
 error.not_available: 'Niedostępne.'
 error.no_refresh_token: 'Brak tokenu odświeżania.'
 error.invalid_refresh_token: 'Nieprawidłowy lub wygasły token odświeżania.'
+error.book_not_done: 'Książka nie jest jeszcze ukończona.'
+error.invalid_rating_score: 'Ocena musi być między 1 a 5.'
+error.already_rated: 'Już oceniłeś tę książkę.'
 
 # Generowanie opowieści
 story.pet_line: 'Mają zwierzaka o imieniu {petName}.'

@@ -13,6 +13,9 @@ error.sync_failed: 'Помилка синхронізації.'
 error.not_available: 'Недоступно.'
 error.no_refresh_token: 'Немає токена оновлення.'
 error.invalid_refresh_token: 'Невірний або прострочений токен оновлення.'
+error.book_not_done: 'Книга ще не завершена.'
+error.invalid_rating_score: 'Оцінка повинна бути від 1 до 5.'
+error.already_rated: 'Ви вже оцінили цю книгу.'
 
 # Генерація історії
 story.pet_line: "У них є домашня тварина на ім'я {petName}."

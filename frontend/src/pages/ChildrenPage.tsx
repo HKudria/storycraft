@@ -20,17 +20,17 @@ export function ChildrenPage() {
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream-50">
       <AppHeader
-        left={<><button onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-gray-700">{t('common.back')}</button><h1 className="text-xl font-bold text-gray-900">{t('children.title')}</h1></>}
-        right={<button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">{t('children.addChild')}</button>}
+        left={<><button onClick={() => navigate('/dashboard')} className="text-midnight/50 hover:text-midnight font-medium transition-colors">{t('common.back')}</button><h1 className="text-xl font-bold text-midnight">{t('children.title')}</h1></>}
+        right={<button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-5 py-2.5 gradient-btn text-white rounded-2xl font-semibold text-sm shadow-warm">{t('children.addChild')}</button>}
       />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         {isLoading ? (
-          <div className="text-gray-500">{t('common.loading')}</div>
+          <div className="text-midnight/50">{t('common.loading')}</div>
         ) : children && children.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {children.map((child) => (
               <ChildCard
                 key={child.id}
@@ -41,16 +41,16 @@ export function ChildrenPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">{t('children.noChildren')}</p>
-            <button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+          <div className="text-center py-16">
+            <p className="text-midnight/50 mb-6 text-lg">{t('children.noChildren')}</p>
+            <button onClick={() => { setEditing(null); setModalOpen(true) }} className="px-6 py-3 gradient-btn text-white rounded-2xl font-semibold shadow-warm">
               {t('children.addChild')}
             </button>
         </div>
         )}
 
-        <div className="mt-8">
-          <Link to="/templates" className="text-indigo-600 hover:text-indigo-800 text-sm">{t('children.browseTemplates')}</Link>
+        <div className="mt-10">
+          <Link to="/templates" className="text-warm-700 hover:text-warm-700/80 text-sm font-medium">{t('children.browseTemplates')}</Link>
         </div>
       </main>
 
@@ -70,13 +70,13 @@ export function ChildrenPage() {
       )}
 
       {confirmDelete !== null && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setConfirmDelete(null)}>
-          <div className="bg-white rounded-xl p-6 max-w-sm" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('children.deleteChild')}</h3>
-            <p className="text-sm text-gray-600 mb-4">{t('children.cannotUndo')}</p>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setConfirmDelete(null)}>
+          <div className="bg-white rounded-2xl p-8 max-w-sm shadow-warm" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-midnight mb-2">{t('children.deleteChild')}</h3>
+            <p className="text-sm text-midnight/60 mb-6">{t('children.cannotUndo')}</p>
             <div className="flex gap-3">
-              <button onClick={() => setConfirmDelete(null)} className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50">{t('common.cancel')}</button>
-              <button onClick={() => { deleteChild.mutate(confirmDelete); setConfirmDelete(null) }} className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+              <button onClick={() => setConfirmDelete(null)} className="flex-1 px-4 py-2.5 border border-cream-200 rounded-2xl text-midnight/70 hover:bg-cream-50 font-medium transition-colors">{t('common.cancel')}</button>
+              <button onClick={() => { deleteChild.mutate(confirmDelete); setConfirmDelete(null) }} className="flex-1 px-4 py-2.5 bg-candy-400 text-white rounded-2xl hover:bg-candy-500 font-medium transition-colors">
                 {t('common.delete')}
               </button>
             </div>

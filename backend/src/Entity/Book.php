@@ -50,6 +50,12 @@ class Book
     #[ORM\Column]
     private ?bool $isPublic = false;
 
+    #[ORM\Column(type: 'decimal', precision: 3, scale: 2, nullable: true)]
+    private ?float $averageRating = null;
+
+    #[ORM\Column]
+    private int $ratingCount = 0;
+
     #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'book', orphanRemoval: true)]
     #[ORM\OrderBy(['pageNumber' => 'ASC'])]
     private Collection $pages;
@@ -94,6 +100,10 @@ class Book
     public function setPdfS3Key(?string $pdfS3Key): static { $this->pdfS3Key = $pdfS3Key; return $this; }
     public function isPublic(): ?bool { return $this->isPublic; }
     public function setIsPublic(bool $isPublic): static { $this->isPublic = $isPublic; return $this; }
+    public function getAverageRating(): ?float { return $this->averageRating; }
+    public function setAverageRating(?float $averageRating): static { $this->averageRating = $averageRating; return $this; }
+    public function getRatingCount(): int { return $this->ratingCount; }
+    public function setRatingCount(int $ratingCount): static { $this->ratingCount = $ratingCount; return $this; }
     public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
