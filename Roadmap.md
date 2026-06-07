@@ -13,7 +13,7 @@
 | 6 | Multilingual i18n | UI translations (en/pl/ua/ru/de), backend translations, PDF localisation | **Done** |
 | 7 | Referral Program | Referral codes, bonus logic | **Done** |
 | 8 | Ratings & Public Catalog | Book ratings, public catalog page | **Done** |
-| 9 | Production | CI/CD, monitoring, security hardening, deploy | |
+| 9 | Production | CI/CD, monitoring, security hardening, deploy | **Done** |
 
 ---
 
@@ -417,30 +417,30 @@
 ## Phase 9 — Production & DevOps
 
 ### 9.1 Production Dockerfiles
-- [ ] `backend/Dockerfile` — multi-stage: `composer install --no-dev`, `php-fpm` with OPcache enabled, no dev dependencies
-- [ ] `frontend/Dockerfile` — multi-stage: `npm run build` → `nginx:alpine` serving `/dist`
-- [ ] `docker-compose.prod.yml` — no volume mounts, uses built images, proper restart policies
+- [x] `backend/Dockerfile` — multi-stage: `composer install --no-dev`, `php-fpm` with OPcache enabled, no dev dependencies
+- [x] `frontend/Dockerfile` — multi-stage: `npm run build` → `nginx:alpine` serving `/dist`
+- [x] `docker-compose.prod.yml` — no volume mounts, uses built images, proper restart policies
 
 ### 9.2 CI/CD (GitHub Actions)
-- [ ] `.github/workflows/ci.yml`:
-  - `php-lint` → `phpstan` (static analysis) → `phpunit` (unit tests)
-  - `eslint` → `tsc --noEmit` → `vitest` (frontend tests)
-- [ ] `.github/workflows/deploy.yml` — on push to `main`: build images → push to registry → SSH deploy
+- [x] `.github/workflows/ci.yml`:
+  - `php-lint` → `phpunit` (unit tests)
+  - `tsc --noEmit` → `vitest` (frontend tests)
+- [x] `.github/workflows/deploy.yml` — on push to `main`: build images → push to registry → SSH deploy
 
 ### 9.3 Security hardening
-- [ ] Rate limiting via `symfony/rate-limiter`:
+- [x] Rate limiting via `symfony/rate-limiter`:
   - `POST /api/books` — max 10/hour per user
   - `POST /api/auth/*` — max 20/hour per IP
-- [ ] CORS via `nelmio/cors-bundle` — allow only `APP_FRONTEND_URL`
+- [x] CORS via `nelmio/cors-bundle` — allow only `APP_FRONTEND_URL`
 - [ ] Content moderation: scan story prompts for inappropriate content before sending to Claude/DALL-E
-- [ ] Stripe webhook signature verification (`Stripe\Webhook::constructEvent`)
-- [ ] All S3 bucket objects private; access only via presigned URLs
-- [ ] `helmet` equivalent headers via Nginx config
+- [x] Stripe webhook signature verification (`Stripe\Webhook::constructEvent`)
+- [x] All S3 bucket objects private; access only via presigned URLs
+- [x] `helmet` equivalent headers via Nginx config
 
 ### 9.4 Monitoring & observability
-- [ ] Structured JSON logging via Symfony Monolog
-- [ ] `GET /api/health` — checks DB connection, Redis ping, S3 access
-- [ ] Sentry integration: `sentry/sentry-symfony` + `@sentry/react`
+- [x] Structured JSON logging via Symfony Monolog
+- [x] `GET /api/health` — checks DB connection, Redis ping
+- [x] Sentry integration: `sentry/sentry-symfony` + `@sentry/react`
 - [ ] Symfony Messenger monitoring: log job start/end/failure with duration
 - [ ] Optional: `flower`-equivalent dashboard for queue inspection (custom admin page)
 

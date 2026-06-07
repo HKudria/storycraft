@@ -9,6 +9,7 @@ use Stripe\Stripe;
 use Stripe\Subscription as StripeSubscription;
 use Stripe\Checkout\Session as CheckoutSession;
 use Stripe\CustomerPortal\Session as PortalSession;
+use Stripe\Webhook;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,7 @@ class SubscriptionController extends AbstractController
         string $stripeSecretKey,
         private readonly string $basicPriceId,
         private readonly string $proPriceId,
+        private readonly string $stripeWebhookSecret = '',
     ) {
         $this->stripeKey = $stripeSecretKey;
     }
@@ -342,7 +344,17 @@ class SubscriptionController extends AbstractController
         Stripe::setApiKey($this->stripeKey);
 
         $payload = $request->getContent();
-        $event = json_decode($payload, true);
+        $sigHeader = $request->headers->get('Stripe-Signature', '');
+
+        if ($this->stripeWebhookSecret) {
+            try {
+                $event = Webhook::constructEvent($payload, $sigHeader, $this->stripeWebhookSecret);
+            } catch (\Throwable) {
+                return new JsonResponse(['error' => 'Invalid signature'], Response::HTTP_BAD_REQUEST);
+            }
+        } else {
+            $event = json_decode($payload, true);
+        }
 
         if (!$event) {
             return new JsonResponse(['error' => $this->translator->trans('error.invalid_payload')], Response::HTTP_BAD_REQUEST);

@@ -1,0 +1,12 @@
+framework:
+    rate_limiter:
+        book_create:
+            policy: 'sliding_window'
+            limit: 10
+            interval: '1 hour'
+            lock_factory: null
+        auth:
+            policy: 'sliding_window'
+            limit: 20
+            interval: '1 hour'
+            lock_factory: null

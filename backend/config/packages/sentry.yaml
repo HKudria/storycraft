@@ -1,0 +1,10 @@
+when@prod:
+    sentry:
+        dsn: '%env(SENTRY_DSN)%'
+        tracing:
+            enabled: false
+        messenger:
+            enabled: true
+        options:
+            environment: '%kernel.environment%'
+            release: '%env(VERSION)%'
