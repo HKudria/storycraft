@@ -15,7 +15,7 @@ RUN apk add --no-cache libpng libjpeg-turbo freetype libzip libpq libintl icu-li
 WORKDIR /var/www/html
 COPY --from=build /app /var/www/html
 
-RUN mkdir -p var/cache var/log /var/log/storycraft && chown -R www-data:www-data var/ /var/log/storycraft
+RUN mkdir -p var/cache var/log && chown -R www-data:www-data var/
 
 EXPOSE 9000
 CMD ["sh", "-c", "mkdir -p var/cache var/log && chown -R www-data:www-data var/ && php-fpm"]

@@ -1,13 +1,13 @@
 monolog:
     channels:
-        - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - deprecation
 
 when@dev:
     monolog:
         handlers:
             main:
                 type: stream
-                path: "/var/log/storycraft/%kernel.environment%.log"
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
                 channels: ["!event"]
             console:
@@ -26,7 +26,7 @@ when@test:
                 channels: ["!event"]
             nested:
                 type: stream
-                path: "/var/log/storycraft/%kernel.environment%.log"
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
 
 when@prod:
@@ -41,8 +41,9 @@ when@prod:
                 buffer_size: 50
             nested:
                 type: stream
-                path: "/var/log/storycraft/%kernel.environment%.log"
+                path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
+                formatter: monolog.formatter.json
             console:
                 type: console
                 process_psr_3_messages: false
@@ -50,4 +51,5 @@ when@prod:
             deprecation:
                 type: stream
                 channels: [deprecation]
-                path: "/var/log/storycraft/deprecation.log"
+                path: "%kernel.logs_dir%/deprecation.log"
+                formatter: monolog.formatter.json
