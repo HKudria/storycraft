@@ -98,7 +98,6 @@ export function NewBookPage() {
           const stepNum = i + 1
           const isCompleted = stepNum < state.step
           const isCurrent = stepNum === state.step
-          const isFuture = stepNum > state.step
 
           return (
             <div key={i} className="flex items-center flex-1 last:flex-none">
@@ -159,8 +158,8 @@ export function NewBookPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {templates?.map((tmpl) => (
               <button key={tmpl.id} onClick={() => dispatch({ type: 'SET_TEMPLATE', templateId: tmpl.id })} className={`text-left p-4 rounded-2xl border-2 transition-all ${state.templateId === tmpl.id ? 'border-warm-700 bg-warm-700/5 shadow-warm' : 'border-cream-200 bg-white hover:border-cream-200 hover:bg-cream-50'}`}>
-                <p className="font-semibold text-midnight">{tmpl.title}</p>
-                <p className="text-sm text-midnight/50 mt-1">{tmpl.description}</p>
+                <p className="font-semibold text-midnight">{t(`templates.${tmpl.title.toLowerCase().replace(' ', '')}`)}</p>
+                <p className="text-sm text-midnight/50 mt-1">{t(`templates.${tmpl.title.toLowerCase().replace(' ', '')}Desc`)}</p>
               </button>
             ))}
           </div>
@@ -206,7 +205,7 @@ export function NewBookPage() {
           <h2 className="text-lg font-bold text-midnight mb-4">{t('newBook.stepReview')}</h2>
           <div className="bg-white rounded-2xl border border-cream-200 overflow-hidden shadow-warm">
             <div className="p-4 border-b border-cream-200"><span className="text-sm text-midnight/50">{t('newBook.childLabel')}</span> <span className="font-semibold text-midnight">{selectedChild?.name}, age {selectedChild?.age}</span></div>
-            <div className="p-4 border-b border-cream-200"><span className="text-sm text-midnight/50">{t('newBook.templateLabel')}</span> <span className="font-semibold text-midnight">{selectedTemplate?.title}</span></div>
+            <div className="p-4 border-b border-cream-200"><span className="text-sm text-midnight/50">{t('newBook.templateLabel')}</span> <span className="font-semibold text-midnight">{selectedTemplate ? t(`templates.${selectedTemplate.title.toLowerCase().replace(' ', '')}`) : ''}</span></div>
             <div className="p-4 border-b border-cream-200"><span className="text-sm text-midnight/50">{t('newBook.topicLabel')}</span> <span className="font-semibold text-midnight">{state.topic}</span></div>
             <div className="p-4 border-b border-cream-200"><span className="text-sm text-midnight/50">{t('newBook.languageLabel')}</span> <span className="font-semibold text-midnight">{state.language.toUpperCase()}</span></div>
             <div className="p-4"><span className="text-sm text-midnight/50">{t('newBook.forLabel')}</span> <span className="font-semibold text-midnight">{user?.name}</span></div>

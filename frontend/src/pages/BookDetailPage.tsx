@@ -15,7 +15,6 @@ export function BookDetailPage() {
   const toggleVisibility = useToggleVisibility()
   const { data: ratings } = useRatings(id ? Number(id) : null)
   const submitRating = useSubmitRating()
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [pdfLoading, setPdfLoading] = useState(false)
   const [selectedScore, setSelectedScore] = useState(0)
   const [comment, setComment] = useState('')
@@ -50,7 +49,6 @@ export function BookDetailPage() {
     setPdfLoading(true)
     try {
       const { data } = await api.get<{ url: string }>(`/books/${book.id}/download`)
-      setPdfUrl(data.url)
       window.open(data.url, '_blank')
     } catch {
       alert(t('bookDetail.pdfNotReady'))

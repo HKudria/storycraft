@@ -16,7 +16,7 @@ export function ChildModal({ child, onSubmit, onClose, loading }: Props) {
 
   const schema = z.object({
     name: z.string().min(1, t('childModal.nameRequired')).max(100),
-    age: z.number().min(1).max(18),
+    age: z.number({ error: t('childModal.ageRequired') }).min(1, t('childModal.ageRange')).max(18, t('childModal.ageRange')),
     gender: z.string().max(20).optional().or(z.literal('')),
     appearance: z.string().max(500).optional().or(z.literal('')),
     interests: z.string().max(500).optional().or(z.literal('')),
@@ -54,7 +54,11 @@ export function ChildModal({ child, onSubmit, onClose, loading }: Props) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('childModal.gender')}</label>
-            <input {...register('gender')} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <select {...register('gender')} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">{t('childModal.genderSelect')}</option>
+              <option value="boy">{t('childModal.genderBoy')}</option>
+              <option value="girl">{t('childModal.genderGirl')}</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('childModal.appearance')}</label>
