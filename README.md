@@ -2,6 +2,20 @@
 
 AI-powered personalized children's storybook platform. Parents enter child details + topic, and the app generates an illustrated story PDF via AI.
 
+## Screenshots
+
+| Login | Dashboard |
+|---|---|
+| ![Login page](docs/index.png) | ![Dashboard](docs/dashboard.png) |
+
+| Template selection | Book creation |
+|---|---|
+| ![Templates](docs/template.png) | ![Creating a book](docs/bookCreating.png) |
+
+| Book detail | Billing |
+|---|---|
+| ![Book with illustrations](docs/book.png) | ![Subscription management](docs/billing.png) |
+
 ## Quick start
 
 ```bash
